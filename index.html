@@ -198,23 +198,35 @@
     // ─── Ecosystem Diagram ────────────────────────────────────────────────────
     function EcosystemDiagram() {
       const [active, setActive] = useState(null);
-      const nodes = [
-        { id:'psa', label:'PSA', sublabel:'ConnectWise, Halo, Autotask', color:'#1e3a5f', x:180, y:140, desc:'The operational brain. Manages tickets, service agreements, invoices, and time tracking. This is where billing lives.' },
-        { id:'rmm', label:'RMM', sublabel:'Remote Monitoring', color:'#374151', x:480, y:50, desc:"Remote Monitoring and Management. Keeps an eye on client computers and servers. Not billing-related — AP doesn't integrate here." },
-        { id:'accounting', label:'Accounting', sublabel:'QuickBooks, Xero', color:'#065f46', x:480, y:230, desc:'Tracks money in and out. Handles payroll, taxes, and financial statements. Receives invoice data from the PSA.' },
-        { id:'ap', label:'AP Platform', sublabel:'Alternative Payments', color:'#2563eb', x:840, y:140, desc:'The missing link. AP connects to BOTH the PSA and accounting software. When a customer pays through AP, both systems update in real time — no manual work needed.' },
-        { id:'client', label:'MSP Client', sublabel:'End Customer', color:'#7c3aed', x:840, y:330, desc:'The business that pays the MSP. They receive an invoice with an AP payment link. They click, pay, and done.' },
+
+      // All nodes described by id, display info, and rect bounds (in SVG coords)
+      const nodeInfo = {
+        psa:        { label:'PSA',         sub:'ConnectWise · Halo · Autotask',  color:'#1e3a5f', integrated:true,  desc:'The operational brain. Manages tickets, service agreements, invoices, and time tracking. This is where billing lives.' },
+        ap:         { label:'AP Platform', sub:'Alternative Payments',           color:'#2563eb', integrated:true,  desc:'The missing link. AP connects to BOTH the PSA and accounting software simultaneously. When a client pays, both systems update in real time — zero manual work.' },
+        accounting: { label:'Accounting',  sub:'QuickBooks · Xero',              color:'#059669', integrated:true,  desc:'Tracks money in and out. Handles payroll, taxes, and financial statements. Receives real-time payment updates directly from AP.' },
+        rmm:        { label:'RMM',         sub:'Remote Monitoring',              color:'#64748b', integrated:false, desc:"Monitors client devices and servers remotely. Not billing-related — AP doesn't integrate here. The RMM sits outside the payment workflow entirely." },
+        client:     { label:'MSP Client',  sub:'End Customer',                   color:'#7c3aed', integrated:true,  desc:'The business that pays the MSP. They receive a branded AP invoice with a payment link. One click to pay — AP handles all the reconciliation.' },
+      };
+      // Rect positions {x,y,w,h} in a 780×410 viewBox
+      const rects = {
+        psa:        { x:30,  y:168, w:162, h:72 },
+        ap:         { x:309, y:168, w:162, h:72 },
+        accounting: { x:588, y:168, w:162, h:72 },
+        rmm:        { x:309, y:42,  w:162, h:68 },
+        client:     { x:309, y:318, w:162, h:68 },
+      };
+      const cx = id => rects[id].x + rects[id].w / 2;
+      const cy = id => rects[id].y + rects[id].h / 2;
+
+      const connections = [
+        { x1:192, y1:204, x2:309, y2:204, color:'#2563eb', dashed:false, label:'invoice sync',    lx:251, ly:194 },
+        { x1:471, y1:204, x2:588, y2:204, color:'#059669', dashed:false, label:'payment sync',    lx:530, ly:194 },
+        { x1:390, y1:110, x2:390, y2:168, color:'#94a3b8', dashed:true,  label:'no integration', lx:445, ly:143 },
+        { x1:390, y1:240, x2:390, y2:318, color:'#7c3aed', dashed:false, label:'payment link',   lx:445, ly:282 },
       ];
-      const lines = [
-        { x1:280, y1:155, x2:400, y2:100, label:'Tickets → billing', color:'#374151' },
-        { x1:280, y1:165, x2:400, y2:245, label:'Invoice sync', color:'#065f46' },
-        { x1:580, y1:245, x2:760, y2:160, label:'Payment reconciled', color:'#2563eb' },
-        { x1:580, y1:80, x2:780, y2:130, label:'', color:'#374151', dashed:true },
-        { x1:940, y1:180, x2:940, y2:280, label:'Payment link', color:'#7c3aed' },
-        { x1:760, y1:155, x2:580, y2:120, label:'', color:'#2563eb', dashed:true },
-        { x1:760, y1:165, x2:580, y2:255, label:'', color:'#2563eb', dashed:true },
-      ];
-      const activeNode = nodes.find(n => n.id === active);
+      const markerFor = c => c.color==='#2563eb'?'arr-blue':c.color==='#059669'?'arr-green':c.color==='#7c3aed'?'arr-purple':'arr-gray';
+      const activeInfo = active ? nodeInfo[active] : null;
+
       return (
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#0a1628,#1e3a5f,#2563eb)'}}>
@@ -222,32 +234,88 @@
             <p className="text-blue-200 text-sm mt-1">Click any node to learn more about its role</p>
           </div>
           <div className="p-4">
-            <div className="relative" style={{height:'420px'}}>
-              <svg className="absolute inset-0 w-full h-full" style={{zIndex:0}} viewBox="0 0 1100 420" preserveAspectRatio="xMidYMid meet">
-                {lines.map((l,i)=>(
-                  <line key={i} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke={l.color} strokeWidth={l.dashed?1.5:2.5} strokeDasharray={l.dashed?'6,4':undefined} opacity={0.6}/>
+            <svg viewBox="0 0 780 410" style={{width:'100%',height:'auto',display:'block'}}>
+              <defs>
+                {[['arr-blue','#2563eb'],['arr-green','#059669'],['arr-purple','#7c3aed'],['arr-gray','#94a3b8']].map(([id,fill])=>(
+                  <marker key={id} id={id} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill={fill} opacity="0.85"/>
+                  </marker>
                 ))}
-                {lines.filter(l=>l.label).map((l,i)=>(
-                  <text key={`lbl-${i}`} x={(l.x1+l.x2)/2} y={(l.y1+l.y2)/2-6} fontSize="11" fill={l.color} textAnchor="middle" opacity={0.8}>{l.label}</text>
-                ))}
-              </svg>
-              {nodes.map(node=>(
-                <button key={node.id} onClick={()=>setActive(active===node.id?null:node.id)} className="ecosystem-node absolute flex flex-col items-center justify-center rounded-2xl text-white font-bold text-sm shadow-lg border-2"
-                  style={{backgroundColor:node.color, borderColor:active===node.id?'#60a5fa':'transparent', left:`${(node.x/1100)*100}%`, top:`${(node.y/420)*100}%`, transform:'translate(-50%,-50%)', width:'130px', height:'80px', zIndex:10, boxShadow:active===node.id?'0 0 0 3px #60a5fa, 0 8px 24px rgba(37,99,235,0.4)':undefined}}>
-                  <span className="text-base font-black">{node.label}</span>
-                  <span className="text-xs opacity-75 text-center px-2 leading-tight mt-1">{node.sublabel}</span>
-                </button>
+              </defs>
+
+              {/* Connections */}
+              {connections.map((c,i)=>(
+                <g key={i}>
+                  <line x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2}
+                    stroke={c.color} strokeWidth={c.dashed?1.5:2.5}
+                    strokeDasharray={c.dashed?'6,4':undefined}
+                    opacity={0.8} markerEnd={`url(#${markerFor(c)})`}/>
+                  <text x={c.lx} y={c.ly} textAnchor="middle"
+                    fill={c.color} fontSize="10" fontWeight="600"
+                    fontFamily="system-ui,sans-serif" opacity="0.9">{c.label}</text>
+                </g>
               ))}
+
+              {/* Nodes */}
+              {Object.keys(rects).map(id=>{
+                const r = rects[id];
+                const info = nodeInfo[id];
+                const isActive = active===id;
+                const midX = r.x+r.w/2;
+                return (
+                  <g key={id} onClick={()=>setActive(active===id?null:id)} style={{cursor:'pointer'}}>
+                    {/* shadow */}
+                    <rect x={r.x+4} y={r.y+4} width={r.w} height={r.h} rx="13" fill="rgba(0,0,0,0.13)"/>
+                    {/* card */}
+                    <rect x={r.x} y={r.y} width={r.w} height={r.h} rx="13"
+                      fill={info.color}
+                      stroke={isActive?'#93c5fd':'rgba(255,255,255,0.18)'}
+                      strokeWidth={isActive?3:1}/>
+                    {/* active glow */}
+                    {isActive&&<rect x={r.x-4} y={r.y-4} width={r.w+8} height={r.h+8} rx="17" fill="none" stroke="#bfdbfe" strokeWidth="1.5" opacity="0.7"/>}
+                    {/* label */}
+                    <text x={midX} y={r.y+r.h/2-8} textAnchor="middle"
+                      fill="white" fontSize={id==='ap'?'14.5':'13.5'} fontWeight="700"
+                      fontFamily="system-ui,-apple-system,sans-serif">{info.label}</text>
+                    {/* sublabel */}
+                    <text x={midX} y={r.y+r.h/2+13} textAnchor="middle"
+                      fill="rgba(255,255,255,0.7)" fontSize="9.5"
+                      fontFamily="system-ui,-apple-system,sans-serif">{info.sub}</text>
+                    {/* "AP integrates here" tag beneath PSA and Accounting */}
+                    {(id==='psa'||id==='accounting')&&(
+                      <text x={midX} y={r.y+r.h+17} textAnchor="middle"
+                        fill="#2563eb" fontSize="9" fontStyle="italic"
+                        fontFamily="system-ui,sans-serif" opacity="0.85">AP integrates here ↑</text>
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+
+            {/* Legend */}
+            <div className="flex flex-wrap gap-5 mt-1 mb-3 px-1">
+              <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                <svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="#2563eb" strokeWidth="2"/></svg>
+                Integrated
+              </div>
+              <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                <svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="5,3"/></svg>
+                Not integrated
+              </div>
             </div>
-            {activeNode && (
-              <div className="mt-2 p-4 rounded-xl border-2 border-blue-200 bg-blue-50 slide-in">
-                <div className="flex items-start gap-3">
-                  <div className="w-3 h-3 rounded-full mt-1 flex-shrink-0" style={{backgroundColor:activeNode.color}}/>
-                  <div>
-                    <p className="font-bold text-slate-800">{activeNode.label}</p>
-                    <p className="text-slate-600 text-sm mt-1">{activeNode.desc}</p>
-                  </div>
+
+            {/* Info panel */}
+            {activeInfo&&(
+              <div className="p-4 rounded-xl border-2 border-blue-100 bg-blue-50 slide-in">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-3 h-3 rounded-full flex-shrink-0" style={{backgroundColor:nodeInfo[active].color}}/>
+                  <p className="font-bold text-slate-800">{activeInfo.label}</p>
+                  <button onClick={()=>setActive(null)} className="ml-auto text-slate-400 text-xs hover:text-slate-600 px-2 py-0.5 rounded hover:bg-slate-200">✕ close</button>
                 </div>
+                <p className="text-slate-600 text-sm leading-relaxed">{activeInfo.desc}</p>
+                {!activeInfo.integrated&&(
+                  <p className="mt-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5">⚠️ AP does not integrate with this system</p>
+                )}
               </div>
             )}
           </div>
