@@ -521,6 +521,346 @@
       );
     }
 
+
+    // ─── Competitive Playbook Component ──────────────────────────────────────
+    function CompetitivePlaybook() {
+      const [activeCo, setActiveCo] = React.useState('cb');
+      const [activeTab, setActiveTab] = React.useState('talk');
+
+      const COMPS = [
+        {
+          id:'cb', name:'ConnectBooster', short:'CB', color:'#dc2626',
+          loom:[
+            {label:'Customer Portal Demo', url:'https://www.loom.com/share/af6390e43f694172bb2a30625f0f5b81'},
+            {label:'Demo vs ConnectBooster', url:'https://www.loom.com/share/1092a3fc301f4bdba0948ed338b7e782'}
+          ],
+          talks:[
+            {label:'Intro', text:'Noticed the ConnectBooster portal on your website. What we\'ve been hearing is that MSPs feel trapped with the 3-year agreements, and since the Kaseya acquisition the product just isn\'t what it used to be. Is that the same for you?'},
+            {label:'Purpose', text:'CB is actually 3 systems: Clearent for CC processing, BNG for ACH, and ConnectBooster for software — 3 bills every month. Alternative Payments is an all-in-one solution: 1 flat-rate subscription, no transaction fees, no hidden costs.'}
+          ],
+          diffs:[
+            {t:'Pricing', ap:'1 flat monthly subscription — no hidden fees or transaction costs', them:'3 separate bills: CB software ($119-$1k/mo) + Clearent CC fees (2.9-3.5%) + BNG ACH fees'},
+            {t:'Client Adoption', ap:'Accounts auto-created — clients pay immediately with zero friction', them:'New clients load as "revoked" — MSP must manually approve each account before they can pay'},
+            {t:'CC Surcharging', ap:'Fee passed directly to end-client at checkout — zero backend reconciliation needed', them:'Clearent creates a separate invoice for the CC fee — MSP must manually reconcile'},
+            {t:'Ownership', ap:'Independent company — 100% focused on MSP payments', them:'Owned by Kaseya — prices increase without product investment; support quality declining'}
+          ],
+          objections:[
+            {o:'"We\'re locked into a 3-year agreement."', r:'Calculate your true monthly cost: CB software + Clearent + BNG. Many MSPs find the savings over the remaining contract term justify switching now. Let\'s look at the numbers together.'},
+            {o:'"Kaseya bundles CB with our other tools."', r:'The bundle hides the real cost — Clearent CC fees and BNG ACH fees are NOT included. Ask yourself: what am I actually paying in transaction fees each month? That\'s the number that matters.'}
+          ],
+          proof:[
+            {co:'Simple Communications', r:'95% reduction in accounts receivable', url:'https://www.alternativepayments.io/customer-stories/'},
+            {co:'Triada Networks', r:'50% reduction in DSO', url:'https://www.alternativepayments.io/customer-stories/'},
+            {co:'Valiant Technology', r:'75% savings on payment processing fees', url:'https://www.alternativepayments.io/customer-stories/'},
+            {co:'ECX Systems', r:'2 hours/week saved on billing tasks', url:'https://www.alternativepayments.io/customer-stories/'}
+          ]
+        },
+        {
+          id:'wp', name:'WisePay', short:'WP', color:'#0891b2',
+          loom:[],
+          talks:[
+            {label:'Intro', text:'Noticed you\'re using WisePay and wanted to give you a call. We\'re working with a lot of MSPs trying to get better control over monthly costs and drive more portal adoption.'},
+            {label:'Purpose', text:'WisePay is actually multiple systems: Global Payments for CC, WisePay for software, WiseSync for syncing — 3 bills/month. AP replaces all of it with 1 flat subscription. And if you only use WiseSync for invoice syncing to QBO, we can replace WiseSync too.'}
+          ],
+          diffs:[
+            {t:'Adoption', ap:'70%+ average adoption — no account creation needed, clients just enter email and pay', them:'Clients must self-create account, then MSP approves, then they can pay. Typical adoption under 40%.'},
+            {t:'CC Processing', ap:'All-in-one — CC fee passed directly to end-client, no reconciliation needed', them:'Uses Global Payments (3rd party). MSP signs separate agreement. Passing CC fees is complex and manual.'},
+            {t:'Pricing', ap:'1 flat monthly subscription', them:'Low SaaS fee hides heavy ACH/CC transaction fees from Global Payments (often bundled with WiseSync)'},
+            {t:'Onboarding', ap:'Full setup in 1 hour. Dedicated CSM, payment data migration included.', them:'Onboarding often takes 3-4 months. Lengthy Global Payments approval. Many MSPs give up entirely.'},
+            {t:'WiseSync Replacement', ap:'Can replace both WisePay AND WiseSync if MSP only syncs invoices to QBO', them:'Separate sync tool often bundled. Confirm what data they sync beyond invoices before claiming replacement.'}
+          ],
+          objections:[
+            {o:'"WisePay is free with our ConnectWise bundle."', r:'The SaaS fee may be free, but ACH and CC transaction fees from Global Payments are not — those can run hundreds per month. Let\'s calculate your true all-in cost.'},
+            {o:'"We\'re currently being onboarded with WisePay."', r:'Many clients in active WisePay onboarding come to us after months of delays. Our onboarding is 1 hour start to finish. Would you be open to a quick comparison before committing?'}
+          ],
+          proof:[
+            {co:'S1 Technology', r:'90% online adoption, 70% reduction in collection times, zero manual billing work', url:'https://www.alternativepayments.io/customer-stories/s1-technology/'},
+            {co:'Contango', r:'30% cost savings, easy migration from ConnectBooster', url:'https://www.alternativepayments.io/customer-stories/contango/'}
+          ]
+        },
+        {
+          id:'stripe', name:'Stripe / Merchants', short:'Stripe', color:'#6366f1',
+          loom:[],
+          talks:[
+            {label:'Intro', text:'Noticed you\'re using Stripe and wanted to give you a call. We\'re working with MSPs trying to better integrate their systems and give clients a real billing portal.'},
+            {label:'Purpose', text:'We work with 600+ MSPs, and the key driver to switch from Stripe is wanting a white-labelled customer portal directly integrated into the PSA — something Stripe simply cannot provide.'}
+          ],
+          diffs:[
+            {t:'Customer Portal', ap:'White-labelled portal — SSO/passwordless, full invoice history, autopay, user management', them:'No white-labeled customer portal. Clients can\'t view invoice history or update payment methods.'},
+            {t:'PSA Integration', ap:'Native integrations built for MSPs — pulls PSA invoice PDFs + auto-reconciles accounting simultaneously', them:'No native PSA integration (exception: HaloPSA). No dual PSA + accounting integration.'},
+            {t:'Autopay', ap:'Autopay tied to PSA agreement — handles fluctuating monthly managed service costs automatically', them:'Subscription payments not tied to PSA agreement. Can\'t handle variable managed service costs.'},
+            {t:'Costs', ap:'Flat subscription + free ACH + CC fee passed to end-client by default', them:'Per-transaction fees for ACH and CC. No native CC surcharging — must manually add line items to invoices.'}
+          ],
+          objections:[
+            {o:'"We use Stripe through HaloPSA."', r:'Stripe\'s HaloPSA integration is basic — it doesn\'t give clients a portal, can\'t pass CC fees automatically, and doesn\'t reconcile to your accounting software. AP does all three natively.'},
+            {o:'"Stripe is easy — I just input my client\'s credit card."', r:'That\'s actually a PCI compliance concern — if you can access client payment details, they\'re not stored securely. AP stores all payment data in PCI-compliant encrypted vaults that only the client can access.'}
+          ],
+          proof:[
+            {co:'RepowerIT', r:'Eliminated billing errors, captured invoice amounts correctly — had been extremely unhappy with Stripe (HaloPSA + QBO)', url:'#'},
+            {co:'MicroSky Managed Services', r:'Significantly boosted autopay adoption (Syncro + QBO)', url:'#'}
+          ]
+        },
+        {
+          id:'melio', name:'Melio', short:'Melio', color:'#059669',
+          loom:[],
+          talks:[
+            {label:'Intro', text:'Noticed you\'re using Melio and wanted to give you a call. We\'re working with a lot of MSPs trying to integrate more of their systems and reduce manual billing work.'},
+            {label:'Purpose', text:'We work with 600+ MSPs, and the key driver to switch from Melio is wanting a customer portal integrated directly into the PSA — plus eliminating per-transaction ACH fees that add up fast.'}
+          ],
+          diffs:[
+            {t:'Costs', ap:'Flat subscription + free ACH + native CC surcharging to end-client', them:'Per-transaction ACH fees up to 1% + CC fees. No native CC surcharging — must add manual invoice line items.'},
+            {t:'PSA Integration', ap:'Dual integration: PSA + accounting software simultaneously', them:'Accounting integrations only (Xero/QBO). No PSA integration — data must be manually duplicated.'},
+            {t:'Autopay', ap:'Autopay tied to PSA agreement — handles variable monthly managed service amounts', them:'No autopay tied to PSA agreements. Can\'t support fluctuating managed service costs.'}
+          ],
+          objections:[
+            {o:'"It\'s literally free. Worst case my clients send a check."', r:'Melio\'s ACH fees add up fast. Plus — clients not using the portal fall back to checks, meaning you\'re acting as the bank for 30+ days. Factor in reconciliation labor and "free" becomes quite expensive.'}
+          ],
+          proof:[
+            {co:'Avid Practice', r:'Moved from Melio + Checks + QBP to AP. Boosted autopay, brought check-payers online. (HaloPSA + QBO, 2024)', url:'#'}
+          ]
+        },
+        {
+          id:'bp', name:'BenjiPays', short:'Benji', color:'#d97706',
+          loom:[
+            {label:'BFA Technologies Q&A Call', url:'https://app.apollo.io/#/conversation-shares/6750da63eca6b403ed7bc210-687e96dd3e89be0021ce76f0'},
+            {label:'Fusion One Demo', url:'https://app.apollo.io/#/conversation-shares/6855e1d046b6c60015e33ee2-687e97c6e9e390001143ca39'}
+          ],
+          talks:[
+            {label:'Intro', text:'I noticed the BenjiPays portal on your website. Many MSPs started with BenjiPays due to cheap subscription costs, but quickly realized the hidden transaction costs keep increasing. Is that something you\'ve noticed?'},
+            {label:'Purpose', text:'The shift we\'re seeing is MSPs replacing BenjiPays with full AR platforms — one portal for billing, payments, and collections, fully synced with both PSA and accounting. It\'s about full control over monthly fees, automations for growth, and trust in the integration accuracy.'}
+          ],
+          diffs:[
+            {t:'Dual Integration', ap:'Integrates with PSA + accounting software simultaneously', them:'No dual integration — requires manual updates to keep PSA and accounting in sync on payment status.'},
+            {t:'CC Processing', ap:'All-in-one — CC processing built in, start immediately', them:'No built-in CC processor — MSP must source, evaluate, and integrate their own CC processor separately.'},
+            {t:'Support', ap:'White-glove service for every customer regardless of plan size', them:'Support quality varies by tier — dedicated CX manager only on highest (most expensive) plans.'},
+            {t:'Autopay Rules', ap:'Autopay tied to PSA agreement types, configurable per customer', them:'Only global autopay rules based on QBO/Xero invoices — no PSA agreement-based autopay.'}
+          ],
+          objections:[
+            {o:'"We just switched from ConnectBooster and don\'t want to switch again."', r:'Completely understand — switching takes effort. But let\'s look at the specific gaps: no dual integration, no built-in CC processor, tiered support. These become bigger friction points as you scale. Better to evaluate now.'}
+          ],
+          proof:[
+            {co:'Fusion One Technologies', r:'Absorbed CC fees, automated email reminders, improved autopay (CW + QBO, June 2025)', url:'#'}
+          ]
+        },
+        {
+          id:'fp', name:'FlexPoint', short:'FP', color:'#7c3aed',
+          loom:[],
+          talks:[
+            {label:'Intro', text:'I saw the FlexPoint portal on your website. Some feedback I\'ve been hearing is that MSPs are frustrated with the lack of support when issues arise — things like payment status or sync errors can take days to resolve. How has that experience been for you?'},
+            {label:'Purpose', text:'The most common FlexPoint issues are duplicate invoices, deposits not reconciling, and hidden fees. AP\'s primary differentiators here are support quality and data accuracy — that\'s what wins deals.'}
+          ],
+          diffs:[
+            {t:'Support', ap:'Your own CSM + sales rep + in-portal live support. Customer Success is AP\'s largest team.', them:'Support is slow — simple issues like payment status or sync errors can take days to resolve.'},
+            {t:'Data Accuracy', ap:'Clean, reliable sync between portal and accounting software', them:'Common complaints: duplicate invoices, deposit reconciliation errors, mapping issues in QBO/Xero.'},
+            {t:'Product Development', ap:'Fastest-developing MSP payments company. Launching Accounts Payable feature.', them:'Users report the product feels stagnant with limited investment in new development.'}
+          ],
+          objections:[
+            {o:'No major documented objections yet', r:'Key discovery questions: "On a scale of 1-10, what\'s the level of support you get when something goes wrong?" and "How much time does your team spend correcting reconciliation/mapping errors each month?"'}
+          ],
+          proof:[
+            {co:'IPTECH', r:'Came to AP after a failed FlexPoint implementation (NC-based partner, June 2025)', url:'#'},
+            {co:'Drevni Networks', r:'Wanted user-friendly portal, better autopay, automated invoice reminders (AutoTask + Xero, March 2025)', url:'#'}
+          ]
+        },
+        {
+          id:'qbp', name:'QuickBooks Payments', short:'QBP', color:'#15803d',
+          loom:[],
+          talks:[
+            {label:'Intro', text:'I was looking at your website and noticed you don\'t have a client payment portal. Are you using something like ConnectBooster or WisePay, or do you accept checks and ACH transfers?'},
+            {label:'Purpose', text:'I work with MSPs in [state] and help them take control of AR by eliminating manual payment collection. How are you collecting payments from your clients today?'}
+          ],
+          diffs:[
+            {t:'Customer Portal', ap:'Full white-labelled portal — SSO/passwordless, invoice history, autopay, team user management', them:'No portal — just a checkout link. Clients must re-enter payment info every time. No invoice history.'},
+            {t:'PSA Integration', ap:'Pulls PSA invoice PDFs into checkout + reconciles accounting simultaneously', them:'No PSA integration — QBO is the only source of truth, not the PSA.'},
+            {t:'Fees', ap:'Free ACH. CC fees (2.9%+$0.30 Visa/MC, 3.5%+$0.30 Amex) billed to end-client by default', them:'1% per ACH (max $10) + 2.9%+$0.30 per CC — all charged to the MSP'},
+            {t:'Autopay', ap:'Autopay by PSA agreement type — handles variable monthly managed service amounts', them:'No PSA-linked autopay. No automated follow-up — MSP manually chases every late payment.'}
+          ],
+          objections:[
+            {o:'"We\'re happy with QuickBooks Payments."', r:'Makes sense at smaller volumes. As you scale: 1% ACH fees + manual invoice management + no portal = real cost. Free ACH + automation + a client portal will meaningfully change your DSO metrics.'},
+            {o:'"We don\'t accept credit cards because of the 2.9% fee."', r:'With AP, the CC fee is billed directly to the end-client by default — you never see it. This lets you offer CC as a payment option without absorbing any of the cost.'}
+          ],
+          proof:[
+            {co:'5K Technical Services', r:'60% of check-payers came online, 10 hrs/month of manual work eliminated (Texas, 2023)', url:'https://www.alternativepayments.io/customer-stories/5k-technical-services/'}
+          ]
+        },
+        {
+          id:'checks', name:'Checks / Direct ACH', short:'Checks', color:'#64748b',
+          loom:[],
+          talks:[
+            {label:'Intro', text:'I was doing research on your website and noticed you don\'t have a client payment portal. The trend we\'re seeing is MSPs moving away from manual payments toward portals integrated with their PSA and accounting — not just to speed up collections, but to fully automate invoicing, reminders, and reconciliation.'},
+            {label:'Reframe', text:'Walk me through what happens when a client pays by check, right through to when you mark it paid. So they write the check, mail it, you receive it, find the invoice in your accounting software, scan or deposit at the bank? Those 2-3 minutes per invoice add up to hours every month.'}
+          ],
+          diffs:[
+            {t:'Security', ap:'PCI compliant + SOC 2 Type 2 — all client payment data encrypted', them:'Checks and direct ACH can be compromised — risk of fraud, unsecured transactions, and bank account exposure.'},
+            {t:'Client Experience', ap:'SSO/passwordless portal — clients set up bank info once, autopay handles the rest every month', them:'Prone to human error: wrong amount, lost check, postal delays. No invoice history or self-service.'},
+            {t:'Cash Flow', ap:'Automated reminders + autopay = predictable monthly cash flow with low DSO', them:'Postal delays, forgetfulness, and lost checks all increase DSO and create unpredictable cash flow.'},
+            {t:'Labor Cost', ap:'Automated reconciliation saves minimum 2-4 hours/month', them:'Manual reconciliation: find invoice, match amount, scan check, bank deposit = 2-3 mins per invoice × volume'}
+          ],
+          objections:[
+            {o:'"It\'s free to go through my bank."', r:'The transaction may be free, but factor in: hours of manual reconciliation, time chasing late payments, DSO impact on cash flow. AP\'s free ACH + automation translates to real dollar savings at scale.'},
+            {o:'"My clients are old-fashioned and have sent checks for years."', r:'We handle the client communication during onboarding. With SSO/passwordless, their account is auto-created — they just enter bank info once. We can even set up autopay so it runs monthly like their phone bill.'}
+          ],
+          proof:[
+            {co:'S1 Technology', r:'90% client adoption, 70% reduction in DSO, fully automated AR (Louisiana, 2023)', url:'https://www.alternativepayments.io/customer-stories/s1-technology/'},
+            {co:'Kalmer Solutions', r:'Needed a trusted payment portal — moved from 100% manual checks (Arkansas, Nov 2024)', url:'#'}
+          ]
+        }
+      ];
+
+      const co = COMPS.find(c=>c.id===activeCo);
+      const tabs = [
+        {id:'talk', label:'Talk Track'},
+        {id:'diffs', label:'Product Diffs'},
+        {id:'obj', label:'Objections'},
+        {id:'proof', label:'Social Proof'}
+      ];
+
+      return (
+        <div className="space-y-5 slide-in">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+            <h2 className="text-2xl font-black mb-1" style={{color:'#0a1628'}}>Competitive Playbook</h2>
+            <p className="text-slate-500 text-sm">Talk tracks, product differences, objections, and social proof for every competitor.</p>
+          </div>
+          <div className="bg-white rounded-2xl border border-slate-200 p-4">
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Select Competitor</p>
+            <div className="flex flex-wrap gap-2">
+              {COMPS.map(c=>(
+                <button key={c.id} onClick={()=>{setActiveCo(c.id);setActiveTab('talk');}}
+                  className="px-3 py-1.5 rounded-xl text-sm font-bold transition-all"
+                  style={{
+                    backgroundColor: activeCo===c.id ? c.color : '#f1f5f9',
+                    color: activeCo===c.id ? 'white' : '#475569',
+                    border: '2px solid ' + (activeCo===c.id ? c.color : 'transparent')
+                  }}>
+                  {c.short}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+            <div className="flex border-b border-slate-100">
+              {tabs.map(tab=>(
+                <button key={tab.id} onClick={()=>setActiveTab(tab.id)}
+                  className="flex-1 py-3 text-xs font-bold uppercase tracking-wide transition-all"
+                  style={{
+                    color: activeTab===tab.id ? co.color : '#94a3b8',
+                    borderBottom: '2px solid ' + (activeTab===tab.id ? co.color : 'transparent')
+                  }}>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <div className="p-5">
+              <div className="flex items-center gap-2 mb-4 flex-wrap">
+                <span className="font-black text-lg" style={{color:co.color}}>{co.name}</span>
+                {co.loom && co.loom.length > 0 && co.loom.map((l,i)=>(
+                  <a key={i} href={l.url} target="_blank" rel="noreferrer"
+                    className="text-xs font-semibold px-3 py-1 rounded-lg ml-auto"
+                    style={{backgroundColor:'#f1f5f9',color:'#2563eb'}}>
+                    {'🎥 ' + l.label}
+                  </a>
+                ))}
+              </div>
+              {activeTab==='talk' && (
+                <div className="space-y-4">
+                  {co.talks.map((t,i)=>(
+                    <div key={i} className="rounded-xl p-4" style={{backgroundColor:'#f8fafc',border:'1px solid #e2e8f0'}}>
+                      <p className="text-xs font-bold uppercase tracking-wide mb-2" style={{color:co.color}}>{t.label}</p>
+                      <p className="text-sm text-slate-700 leading-relaxed italic">{'"' + t.text + '"'}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {activeTab==='diffs' && (
+                <div className="space-y-3">
+                  {co.diffs.map((d,i)=>(
+                    <div key={i} className="rounded-xl overflow-hidden border border-slate-200">
+                      <div className="px-4 py-2" style={{backgroundColor:co.color}}>
+                        <p className="text-xs font-bold text-white uppercase tracking-wide">{d.t}</p>
+                      </div>
+                      <div className="grid grid-cols-2 divide-x divide-slate-100">
+                        <div className="p-3">
+                          <p className="text-xs font-bold text-red-500 mb-1">{'❌ ' + co.name}</p>
+                          <p className="text-xs text-slate-600 leading-relaxed">{d.them}</p>
+                        </div>
+                        <div className="p-3 bg-green-50">
+                          <p className="text-xs font-bold text-green-600 mb-1">{'✅ Alternative Payments'}</p>
+                          <p className="text-xs text-slate-700 leading-relaxed">{d.ap}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {activeTab==='obj' && (
+                <div className="space-y-4">
+                  {co.objections.map((obj,i)=>(
+                    <div key={i} className="rounded-xl border border-slate-200 overflow-hidden">
+                      <div className="p-3 bg-red-50 border-b border-slate-100">
+                        <p className="text-xs font-bold text-red-600 mb-1">Prospect Says:</p>
+                        <p className="text-sm text-slate-700 italic">{obj.o}</p>
+                      </div>
+                      <div className="p-3 bg-green-50">
+                        <p className="text-xs font-bold text-green-600 mb-1">Your Response:</p>
+                        <p className="text-sm text-slate-700 leading-relaxed">{obj.r}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {activeTab==='proof' && (
+                <div className="space-y-3">
+                  {co.proof.map((p,i)=>(
+                    <div key={i} className="rounded-xl p-4" style={{backgroundColor:'#f0fdf4',border:'1px solid #bbf7d0'}}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-bold text-slate-800">{p.co}</p>
+                          <p className="text-sm text-green-700 mt-0.5">{'📈 ' + p.r}</p>
+                        </div>
+                        {p.url !== '#' && (
+                          <a href={p.url} target="_blank" rel="noreferrer"
+                            className="text-xs font-semibold px-3 py-1 rounded-lg flex-shrink-0"
+                            style={{backgroundColor:'#dcfce7',color:'#15803d'}}>
+                            Case Study →
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ─── Knowledge Base Component ─────────────────────────────────────────────
+    function KnowledgeBase() {
+      return (
+        <div className="space-y-4 slide-in">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+            <h2 className="text-2xl font-black mb-1" style={{color:'#0a1628'}}>Knowledge Base</h2>
+            <p className="text-slate-500 text-sm leading-relaxed">Live content from the Alternative Payments GitBook — always up to date. Includes sales processes, competitor analysis, playbooks, and more.</p>
+            <div className="mt-3 flex gap-2">
+              <a href="https://internaldocs.alternativepayments.io/sales" target="_blank" rel="noreferrer"
+                className="text-xs font-semibold px-3 py-1.5 rounded-lg"
+                style={{backgroundColor:'#eff6ff',color:'#2563eb'}}>
+                Open in new tab ↗
+              </a>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden" style={{height:'78vh'}}>
+            <iframe
+              src="https://internaldocs.alternativepayments.io/sales"
+              style={{width:'100%',height:'100%',border:'none'}}
+              title="Alternative Payments Knowledge Base"
+            />
+          </div>
+        </div>
+      );
+    }
+
     // ─── Module Content ───────────────────────────────────────────────────────
     function ModuleContent({ moduleId }) {
       const [expandedPSA, setExpandedPSA] = useState(null);
@@ -870,6 +1210,8 @@
         </div>
       );
 
+      if (moduleId==='competitive') return <CompetitivePlaybook/>;
+      if (moduleId==='knowledge-base') return <KnowledgeBase/>;
       return null;
     }
 
@@ -882,6 +1224,8 @@
       {id:'ap-fit',icon:'⚡',title:'Where AP Fits',desc:'Dual integration and the AP advantage',time:'10 min',color:'#2563eb'},
       {id:'msp-culture',icon:'🤝',title:'MSP Culture',desc:'How to sell to MSPs effectively',time:'7 min',color:'#7c3aed'},
       {id:'spot-psa',icon:'🔍',title:'Spot a PSA',desc:'Identify PSA types from MSP websites',time:'6 min',color:'#0284c7'},
+      {id:'competitive',icon:'⚔️',title:'Competitive Playbook',desc:'Talk tracks & objections for every competitor',time:'Reference',color:'#dc2626'},
+      {id:'knowledge-base',icon:'📚',title:'Knowledge Base',desc:'Live GitBook — sales processes, playbooks & more',time:'Live',color:'#0891b2'},
     ];
 
     // ─── Home Screen ──────────────────────────────────────────────────────────
@@ -896,7 +1240,7 @@
             <h1 className="text-3xl font-black leading-tight mb-3">MSP Landscape<br/>BDR Onboarding</h1>
             <p className="text-blue-100 leading-relaxed max-w-lg">Everything you need to understand the MSP market, speak the language, and sell with confidence. Work through each module at your own pace.</p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>7 Modules</div>
+              <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>9 Modules</div>
               <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>Interactive visuals</div>
               <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>Quizzes included</div>
             </div>
@@ -983,3 +1327,8 @@
   </script>
 </body>
 </html>
+
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>
