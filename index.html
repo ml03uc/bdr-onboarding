@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MSP Onboarding | Alternative Payments</title>
+  <title>MSP Guide | Alternative Payments</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -917,7 +917,7 @@
               <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg" style={{backgroundColor:'#0a162820'}}>🎓</div>
               <div>
                 <h3 className="font-black text-slate-800 text-base">MSP Crash Course Resources</h3>
-                <p className="text-slate-500 text-xs">Core reading and reference material for new BDRs</p>
+                <p className="text-slate-500 text-xs">Core reading and reference material for new reps</p>
               </div>
             </div>
             <div className="grid md:grid-cols-2 gap-3">
@@ -942,7 +942,7 @@
           </div>
 
           <div className="rounded-2xl border border-amber-200 p-5" style={{background:'linear-gradient(135deg,#fffbeb,#fff7ed)'}}>
-            <h3 className="font-black text-amber-900 text-sm mb-2">📋 Recommended Reading Order for New BDRs</h3>
+            <h3 className="font-black text-amber-900 text-sm mb-2">📋 Recommended Reading Order for New Reps</h3>
             <ol className="space-y-1">
               {['Watch the MSP Market video first — get the big picture','Read the MSP KB highlighted chapters — build your vocabulary','Study the PSA Platforms module — know every system cold','Review the Competitor Analysis — know how to position AP','Use the Competitor Spreadsheet during objection handling'].map((step,i)=>(
                 <li key={i} className="flex gap-2 text-xs text-amber-800">
@@ -953,12 +953,15 @@
             </ol>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden" style={{height:'78vh'}}>
-            <iframe
-              src="https://internaldocs.alternativepayments.io/sales"
-              style={{width:'100%',height:'100%',border:'none'}}
-              title="Alternative Payments Knowledge Base"
-            />
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center">
+            <div className="text-4xl mb-3">📚</div>
+            <p className="font-black text-slate-800 text-base mb-1">Alternative Payments GitBook</p>
+            <p className="text-slate-500 text-sm mb-4 leading-relaxed">Sales processes, playbooks, objection handling, and more — always up to date.</p>
+            <a href="https://internaldocs.alternativepayments.io/sales" target="_blank" rel="noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white"
+              style={{backgroundColor:'#0891b2',textDecoration:'none'}}>
+              Open Knowledge Base ↗
+            </a>
           </div>
         </div>
       );
@@ -1362,10 +1365,9 @@
         <div className="space-y-6 slide-in">
           <div className="gradient-header rounded-2xl p-8 text-white">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{backgroundColor:'rgba(255,255,255,0.2)'}}>⚡</div>
               <span className="text-blue-200 font-semibold">Alternative Payments</span>
             </div>
-            <h1 className="text-3xl font-black leading-tight mb-3">MSP Landscape<br/>BDR Onboarding</h1>
+            <h1 className="text-3xl font-black leading-tight mb-3">MSP Landscape<br/>Onboarding Guide</h1>
             <p className="text-blue-100 leading-relaxed max-w-lg">Everything you need to understand the MSP market, speak the language, and sell with confidence. Work through each module at your own pace.</p>
             <div className="mt-5 flex flex-wrap gap-3">
               <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>9 Modules</div>
@@ -1408,7 +1410,7 @@
                   <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{backgroundColor:'#0a1628'}}>
                     <span className="text-white text-xs font-black">AP</span>
                   </div>
-                  <span className="font-black text-slate-800 text-sm hidden sm:block">MSP Onboarding</span>
+                  <span className="font-black text-slate-800 text-sm hidden sm:block">MSP Guide</span>
                 </button>
                 {active!=='home'&&current&&(
                   <>
