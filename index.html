@@ -191,6 +191,28 @@
           options: ["ConnectWise","HaloPSA","SyncroMSP","Autotask (owned by Kaseya)"],
           correct: 3,
           explanation: "Autotask portals load from autotask.net. Autotask was acquired by Kaseya in 2022 (previously owned by Datto, which acquired Autotask in 2017). So Autotask customers are Kaseya customers — and often open to switching payment processors."
+        },
+        {
+          question: "You visit an MSP's website and see a CloudRadial client portal. What should you assume about their payment processor?",
+          options: [
+            "They use WisePay — CloudRadial integrates with ConnectWise",
+            "They use Stripe — CloudRadial is a modern platform",
+            "They most likely use ConnectBooster, since CloudRadial MSPs commonly pair it with ConnectBooster",
+            "There's no way to know — CloudRadial doesn't indicate anything"
+          ],
+          correct: 2,
+          explanation: "CloudRadial is a client management platform (not a PSA), but MSPs using it are most likely to have ConnectBooster for payments. It's a warm signal — dig deeper to confirm, but ConnectBooster is your best first assumption."
+        },
+        {
+          question: "Kaseya BMS is best described as...",
+          options: [
+            "Kaseya's RMM tool — manages remote devices",
+            "Kaseya's native PSA — less common than Autotask, same Kaseya ecosystem",
+            "A standalone billing platform owned by Kaseya",
+            "ConnectWise's backup PSA product"
+          ],
+          correct: 1,
+          explanation: "Kaseya BMS is Kaseya's native PSA. It's less common than Autotask but operates the same way — ConnectBooster is the default payment tool, and MSPs using it are inside the Kaseya ecosystem. The same pitch applies: they're likely frustrated with Kaseya and open to alternatives."
         }
       ]
     };
@@ -837,6 +859,45 @@
 
     // ─── Knowledge Base Component ─────────────────────────────────────────────
     function KnowledgeBase() {
+      const crashCourseResources = [
+        {
+          icon:'📖',
+          title:'MSP Knowledge Base',
+          desc:'The MSP KB — your primary source for MSP basics. Highly recommended chapters inside.',
+          url:'https://docs.google.com/document/d/1tJY6GgZ2U2LMeZOH25ZOJzXYgvQ2lWAsJLfyTPKWTOQ/edit?tab=t.0',
+          label:'Open MSP KB',
+          color:'#1e3a5f',
+          tag:'Foundational Reading'
+        },
+        {
+          icon:'🎥',
+          title:'The MSP Market — Video Overview',
+          desc:'A great video breakdown of the MSP market. Watch this early in your onboarding to build context fast.',
+          url:'https://www.youtube.com/watch?v=Ezwg1dKn1HM',
+          label:'Watch on YouTube',
+          color:'#dc2626',
+          tag:'Video'
+        },
+        {
+          icon:'⚔️',
+          title:'Competitor Analysis Doc',
+          desc:'Deep-dive analysis of WisePay, ConnectBooster, Stripe, FlexPoint, and more. Know every competitor cold.',
+          url:'https://docs.google.com/document/d/1EfsBO55J8l_VcxUe04F3m8E-I887Nc0wYWOAyWFOIw4/edit?tab=t.0',
+          label:'Open Analysis',
+          color:'#b45309',
+          tag:'Competitive Intel'
+        },
+        {
+          icon:'📊',
+          title:'Competitor Side-by-Side Spreadsheet',
+          desc:'Technical feature comparison of all competitors. Use this for objection handling when prospects ask "how are you different?"',
+          url:'https://docs.google.com/spreadsheets/d/1CHv_4oEZLyimq7fmxb21IETdYicmmuTmkNUvnDtD4qk/edit?gid=0#gid=0',
+          label:'Open Spreadsheet',
+          color:'#059669',
+          tag:'Reference Sheet'
+        },
+      ];
+
       return (
         <div className="space-y-4 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
@@ -850,6 +911,48 @@
               </a>
             </div>
           </div>
+
+          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg" style={{backgroundColor:'#0a162820'}}>🎓</div>
+              <div>
+                <h3 className="font-black text-slate-800 text-base">MSP Crash Course Resources</h3>
+                <p className="text-slate-500 text-xs">Core reading and reference material for new BDRs</p>
+              </div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-3">
+              {crashCourseResources.map(r=>(
+                <a key={r.title} href={r.url} target="_blank" rel="noreferrer"
+                  className="flex gap-4 items-start p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all"
+                  style={{textDecoration:'none'}}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style={{backgroundColor:r.color+'18'}}>
+                    {r.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-bold text-slate-800 text-sm leading-tight">{r.title}</p>
+                      <span className="text-xs px-2 py-0.5 rounded-full font-semibold flex-shrink-0" style={{backgroundColor:r.color+'15',color:r.color}}>{r.tag}</span>
+                    </div>
+                    <p className="text-slate-500 text-xs leading-relaxed">{r.desc}</p>
+                    <p className="text-xs font-semibold mt-2" style={{color:r.color}}>{r.label} ↗</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-amber-200 p-5" style={{background:'linear-gradient(135deg,#fffbeb,#fff7ed)'}}>
+            <h3 className="font-black text-amber-900 text-sm mb-2">📋 Recommended Reading Order for New BDRs</h3>
+            <ol className="space-y-1">
+              {['Watch the MSP Market video first — get the big picture','Read the MSP KB highlighted chapters — build your vocabulary','Study the PSA Platforms module — know every system cold','Review the Competitor Analysis — know how to position AP','Use the Competitor Spreadsheet during objection handling'].map((step,i)=>(
+                <li key={i} className="flex gap-2 text-xs text-amber-800">
+                  <span className="font-black text-amber-600 flex-shrink-0">{i+1}.</span>
+                  {step}
+                </li>
+              ))}
+            </ol>
+          </div>
+
           <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden" style={{height:'78vh'}}>
             <iframe
               src="https://internaldocs.alternativepayments.io/sales"
@@ -996,6 +1099,7 @@
               {name:'Kaseya BMS',owner:'Kaseya',processor:'ConnectBooster',color:'#7c3aed',notes:"Kaseya's native PSA — less common than Autotask. Same Kaseya-owned ConnectBooster as default. Same pitch applies: MSPs who use this are likely unhappy with Kaseya and open to switching."},
               {name:'SyncroMSP',owner:'SyncroMSP (independent)',processor:'WorldPay (built-in) or Stripe',color:'#0284c7',notes:'Syncro is a unified PSA and RMM. Smaller market. Less common than ConnectWise or Autotask. Payment is via WorldPay (built in) or Stripe. Not a priority PSA target, but worth noting when you encounter it.'},
               {name:'SuperOps',owner:'SuperOps (independent)',processor:'Stripe or FlexPoint',color:'#dc2626',notes:'Modern unified PSA and RMM, AI-focused. Newer entrant to the market. Payment is typically Stripe or FlexPoint. Growing presence in the market — worth tracking.'},
+              {name:'CloudRadial',owner:'CloudRadial (independent)',processor:'ConnectBooster (most likely)',color:'#0891b2',notes:'⚠️ NOT a PSA — CloudRadial is a client management platform that sits on top of a PSA. It provides client-facing portals for MSPs. MSPs using CloudRadial are most likely to also run ConnectBooster for payments. When you see a CloudRadial portal, dig one layer deeper to identify their actual PSA underneath.'},
             ].map(p=>(
               <PSACard key={p.name} {...p} isExpanded={expandedPSA===p.name} onClick={()=>setExpandedPSA(expandedPSA===p.name?null:p.name)}/>
             ))}
@@ -1176,20 +1280,28 @@
           </div>
           <div className="space-y-4">
             {[
-              {psa:'ConnectWise',signals:['URL contains connectwise.com or screensurfer.com','Login page has a dark navy theme','Often shows a "ConnectWise" logo in the portal'],processor:'WisePay',opportunity:'WisePay is limited to ConnectWise only. AP offers ConnectWise integration with accounting sync WisePay cannot provide.',color:'#1e3a5f'},
-              {psa:'Autotask (Kaseya)',signals:['URL contains autotask.net','Login screen typically reads "Autotask PSA" or "Client Portal"','Simple, corporate-looking login form'],processor:'ConnectBooster',opportunity:"Kaseya-owned. They're your best prospect for switching. Lead with the Kaseya angle.",color:'#b45309'},
-              {psa:'HaloPSA',signals:['URL contains haloservicedesk.com or a custom subdomain','Clean, modern portal design','Halo branding visible'],processor:'Alternative Payments (we are the exclusive partner)',opportunity:'Every HaloPSA prospect is a warm AP lead. They likely already know us.',color:'#059669'},
-              {psa:'SyncroMSP',signals:['URL contains syncromsp.com','Minimal, modern portal','Often branded with the MSP name but Syncro powered'],processor:'WorldPay or Stripe',opportunity:'Smaller market but still worth noting. Generic payment tools mean no PSA reconciliation.',color:'#0284c7'},
+              {psa:'ConnectWise',signals:['URL contains connectwise.com, screensurfer.com, or a custom subdomain','Login page has a dark navy/blue corporate theme','ConnectWise logo visible in portal header','Note: Older versions look more dated/grey — still ConnectWise','Obscure variant: the URL itself is the giveaway even if branding is minimal'],processor:'WisePay',opportunity:'WisePay is limited to ConnectWise only. AP offers ConnectWise integration with accounting sync WisePay cannot provide.',color:'#1e3a5f',
+                portal:{bg:'#0a1628',accent:'#1e3a5f',text:'white',label:'ConnectWise Client Portal',url:'company.connectwise.com/clientportal',field1:'Username',field2:'Password',btnColor:'#2563eb',note:'Multiple visual variants exist — navy/dark is most common, older grey version also in use'}},
+              {psa:'Autotask (Kaseya)',signals:['URL contains autotask.net','Login screen reads "Autotask PSA" or "Client Portal"','Simple, corporate login form','ww1.autotask.net is the typical URL pattern'],processor:'ConnectBooster',opportunity:"Kaseya-owned. Best prospect for switching. Lead with the Kaseya angle — they're looking to leave.",color:'#b45309',
+                portal:{bg:'#1f2937',accent:'#374151',text:'white',label:'Autotask Client Portal',url:'ww1.autotask.net/clientportal/login.aspx',field1:'Username',field2:'Password',btnColor:'#b45309',note:'Straightforward corporate login — Kaseya branding minimal on this legacy product'}},
+              {psa:'HaloPSA',signals:['URL contains haloservicedesk.com or custom subdomain','Clean, modern portal with white/light UI','Halo branding or logo visible','Often shows "Support Portal" or company name prominently'],processor:'Alternative Payments (exclusive partner)',opportunity:'🌟 Every HaloPSA prospect is a warm AP lead — we are their ONLY officially supported payment integration.',color:'#059669',
+                portal:{bg:'white',accent:'#059669',text:'#1f2937',label:'Support Portal',url:'portal.haloservicedesk.com',field1:'Email Address',field2:'Password',btnColor:'#059669',note:'Modern clean design — stands out immediately from ConnectWise/Autotask portals'}},
+              {psa:'Kaseya BMS',signals:['URL contains bms.kaseya.com','Kaseya branded login page','Gateway URL pattern: bms.kaseya.com/gateway.aspx','Less common than Autotask but same Kaseya ecosystem'],processor:'ConnectBooster',opportunity:"Same Kaseya playbook applies. MSPs on Kaseya BMS are often unhappy and open to alternatives for everything Kaseya-owned.",color:'#7c3aed',
+                portal:{bg:'#1a0533',accent:'#7c3aed',text:'white',label:'Kaseya BMS Client Portal',url:'bms.kaseya.com/gateway.aspx',field1:'Username',field2:'Password',btnColor:'#7c3aed',note:'Kaseya-branded; less common than Autotask but same objections apply'}},
+              {psa:'SyncroMSP',signals:['URL contains syncromsp.com','Minimal, modern portal','Often branded with MSP name but Syncro-powered','WorldPay payment integration built in'],processor:'WorldPay or Stripe',opportunity:'Smaller market but generic payment tools mean no PSA reconciliation — a gap AP fills.',color:'#0284c7',
+                portal:{bg:'#f8fafc',accent:'#0284c7',text:'#1f2937',label:'Client Portal',url:'app.syncromsp.com/portal',field1:'Email',field2:'Password',btnColor:'#0284c7',note:'Clean minimal design, often co-branded with MSP name'}},
+              {psa:'CloudRadial',signals:['URL contains cloudradial.com or custom subdomain','Modern tile/dashboard-style portal (not a simple login form)','Branded with MSP colors and logo','Note: This is a CLIENT MANAGEMENT PLATFORM — not a PSA'],processor:'ConnectBooster (most likely)',opportunity:"CloudRadial sits on top of a real PSA. Dig deeper to find the underlying PSA. Most CloudRadial users also have ConnectBooster — making them prime AP targets.",color:'#0891b2',
+                portal:{bg:'#0891b2',accent:'#0e7490',text:'white',label:'Client Portal',url:'company.cloudradial.com',field1:'Email Address',field2:'Password',btnColor:'#164e63',note:'⚠️ Not a PSA — a client management layer. Find their real PSA by asking or researching further.'}},
             ].map(p=>(
               <div key={p.psa} className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
                 <div className="flex items-center gap-4 p-4 border-b border-slate-100" style={{backgroundColor:p.color+'15'}}>
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black" style={{backgroundColor:p.color}}>{p.psa[0]}</div>
-                  <div>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm" style={{backgroundColor:p.color}}>{p.psa[0]}</div>
+                  <div className="flex-1">
                     <p className="font-black text-slate-800">{p.psa}</p>
                     <p className="text-xs text-slate-500">Default payment tool: <strong>{p.processor}</strong></p>
                   </div>
                 </div>
-                <div className="p-4 grid md:grid-cols-2 gap-4">
+                <div className="p-4 grid md:grid-cols-3 gap-4">
                   <div>
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">How to recognize it</p>
                     <ul className="space-y-1">
@@ -1197,6 +1309,22 @@
                         <li key={s} className="flex gap-2 text-xs text-slate-600"><span className="text-slate-400 flex-shrink-0">•</span>{s}</li>
                       ))}
                     </ul>
+                  </div>
+                  <div style={{backgroundColor:p.portal.bg,borderRadius:'12px',padding:'14px',minHeight:'140px'}}>
+                    <p className="text-xs font-bold mb-2 opacity-70" style={{color:p.portal.text}}>{p.portal.label}</p>
+                    <p className="text-xs mb-3 opacity-50 font-mono" style={{color:p.portal.text,fontSize:'9px'}}>{p.portal.url}</p>
+                    <div className="space-y-1.5">
+                      <div style={{backgroundColor:'rgba(255,255,255,0.15)',borderRadius:'6px',padding:'5px 8px'}}>
+                        <p style={{color:p.portal.text,opacity:0.6,fontSize:'9px'}}>{p.portal.field1}</p>
+                      </div>
+                      <div style={{backgroundColor:'rgba(255,255,255,0.15)',borderRadius:'6px',padding:'5px 8px'}}>
+                        <p style={{color:p.portal.text,opacity:0.6,fontSize:'9px'}}>{p.portal.field2}</p>
+                      </div>
+                      <div style={{backgroundColor:p.portal.btnColor,borderRadius:'6px',padding:'5px 8px',textAlign:'center',marginTop:'6px'}}>
+                        <p style={{color:'white',fontSize:'9px',fontWeight:'bold'}}>Sign In</p>
+                      </div>
+                    </div>
+                    <p className="mt-2 opacity-50" style={{color:p.portal.text,fontSize:'8px',lineHeight:'1.3'}}>{p.portal.note}</p>
                   </div>
                   <div className="bg-blue-50 rounded-xl p-3">
                     <p className="text-xs font-bold text-blue-700 uppercase tracking-wide mb-1">AP Opportunity</p>
