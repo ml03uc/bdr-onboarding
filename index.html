@@ -37,13 +37,16 @@
     .gradient-header { background: linear-gradient(135deg,#0a1628 0%,#1e3a5f 50%,#2563eb 100%); }
     .ecosystem-node { transition: all 0.2s ease; }
     .ecosystem-node:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(37,99,235,0.3); }
+    .flow-node { transition: all 0.25s ease; }
+    .flow-node:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+    .flow-node-active { ring: 2px solid #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.3); }
+    .integration-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
     const { useState } = React;
-
     // ─── Quiz Data ────────────────────────────────────────────────────────────
     const QUIZZES = {
       'what-is-msp': [
@@ -98,7 +101,7 @@
           question: "Which of these tools does an MSP use to track expenses, run payroll, and file taxes?",
           options: ["The PSA","The RMM","Accounting Software (like QuickBooks)","The AP Platform"],
           correct: 2,
-          explanation: "Accounting software like QuickBooks handles the financial side — payroll, expenses, taxes, and compliance. The PSA handles the operations side."
+          explanation: "Accounting software like QuickBooks handles the financial side: payroll, expenses, taxes, and compliance. The PSA handles the operations side."
         }
       ],
       'psa-platforms': [
@@ -109,12 +112,12 @@
           explanation: "HaloPSA's only MSP payment processor integration is Alternative Payments. Since Halo is growing fast and taking market share, this is a huge opportunity."
         },
         {
-          question: "ConnectBooster is owned by which company — and why does that matter to us?",
+          question: "ConnectBooster is owned by which company, and why does that matter to us?",
           options: [
-            "ConnectWise — MSPs using ConnectWise love it",
-            "Kaseya — MSPs dislike Kaseya, making them open to switching",
-            "Alternative Payments — it's our own product",
-            "QuickBooks — it's a financial product"
+            "ConnectWise: MSPs using ConnectWise love it",
+            "Kaseya: MSPs dislike Kaseya, making them open to switching",
+            "Alternative Payments: it's our own product",
+            "QuickBooks: it's a financial product"
           ],
           correct: 1,
           explanation: "Kaseya owns ConnectBooster. Because MSPs widely dislike Kaseya (known for aggressive acquisitions and price hikes), ConnectBooster customers are often open to exploring alternatives."
@@ -147,7 +150,53 @@
             "AP works with both ConnectWise and Autotask"
           ],
           correct: 1,
-          explanation: "Dual integration = AP connects to the PSA (like ConnectWise) AND the accounting software (like QuickBooks) at the same time. When a customer pays, both systems update automatically — no manual reconciliation needed."
+          explanation: "Dual integration = AP connects to the PSA (like ConnectWise) AND the accounting software (like QuickBooks) at the same time. When a customer pays, both systems update automatically. No manual reconciliation needed."
+        }
+      ],
+      'invoicing-flow': [
+        {
+          question: "In the MSP revenue flow, every invoice starts with...",
+          options: [
+            "A payment link sent by AP",
+            "A ticket created in the PSA",
+            "A QuickBooks entry",
+            "An email from the client"
+          ],
+          correct: 1,
+          explanation: "Every invoice in an MSP starts with a ticket in the PSA. The ticket syncs to the accounting system or ERP, and the invoice is created from there."
+        },
+        {
+          question: "What are the three types of MSP invoicing?",
+          options: [
+            "Daily, weekly, monthly",
+            "Quoting tools, Projects/ad-hoc, Recurring",
+            "ACH, credit card, check",
+            "PSA, RMM, Accounting"
+          ],
+          correct: 1,
+          explanation: "MSP invoicing branches into three types: Quoting tools (for CPQ/proposals), Projects/ad-hoc (one-time or break-fix), and Recurring (monthly managed services that scale)."
+        },
+        {
+          question: "When can AP replace WiseSync or Gozynta/Mobius?",
+          options: [
+            "Always: AP replaces all sync tool functionality",
+            "Never: sync tools serve a completely different purpose",
+            "Only when the MSP uses the sync tool solely for payments and invoicing (not procurement, expenses, or inventory)",
+            "Only for HaloPSA users"
+          ],
+          correct: 2,
+          explanation: "AP can replace sync tools like WiseSync or Gozynta/Mobius IF the MSP only uses them for payment and invoice syncing. If they also use them for procurement, expenses, or product inventory, the MSP should keep the sync tool for those workflows."
+        },
+        {
+          question: "What is the correct term for the MSP's customer in AP language?",
+          options: [
+            "Partner",
+            "User",
+            "Client (the MSP's end-client)",
+            "Customer"
+          ],
+          correct: 2,
+          explanation: "In AP language: Partner = the MSP, Client = the MSP's end-client. The Admin/Partner Dashboard is the MSP's view, and the Client Portal is the end-client's payment view."
         }
       ],
       'msp-culture': [
@@ -171,7 +220,7 @@
             "Kaseya only works with enterprise MSPs"
           ],
           correct: 2,
-          explanation: "MSPs had tools they loved — Autotask, ConnectBooster — and then Kaseya bought them. This typically leads to price increases, long-term contracts, and reduced support. MSPs see AP as the underdog alternative they're rooting for."
+          explanation: "MSPs had tools they loved (Autotask, ConnectBooster) and then Kaseya bought them. This typically leads to price increases, long-term contracts, and reduced support. MSPs see AP as the underdog alternative they're rooting for."
         }
       ],
       'spot-psa': [
@@ -184,52 +233,48 @@
             "Check their job postings for PSA software names"
           ],
           correct: 2,
-          explanation: "When MSPs set up a support portal for their clients, it's powered by their PSA. Clicking 'Support' on their website usually loads a login page that reveals which PSA they use — the URL is the biggest giveaway."
+          explanation: "When MSPs set up a support portal for their clients, it's powered by their PSA. Clicking 'Support' on their website usually loads a login page that reveals which PSA they use. The URL is the biggest giveaway."
         },
         {
           question: "If you see a login URL containing 'autotask.net', which PSA is the MSP using?",
           options: ["ConnectWise","HaloPSA","SyncroMSP","Autotask (owned by Kaseya)"],
           correct: 3,
-          explanation: "Autotask portals load from autotask.net. Autotask was acquired by Kaseya in 2022 (previously owned by Datto, which acquired Autotask in 2017). So Autotask customers are Kaseya customers — and often open to switching payment processors."
+          explanation: "Autotask portals load from autotask.net. Autotask was acquired by Kaseya in 2022 (previously owned by Datto, which acquired Autotask in 2017). So Autotask customers are Kaseya customers, and often open to switching payment processors."
         },
         {
           question: "You visit an MSP's website and see a CloudRadial client portal. What should you assume about their payment processor?",
           options: [
-            "They use WisePay — CloudRadial integrates with ConnectWise",
-            "They use Stripe — CloudRadial is a modern platform",
+            "They use WisePay: CloudRadial integrates with ConnectWise",
+            "They use Stripe: CloudRadial is a modern platform",
             "They most likely use ConnectBooster, since CloudRadial MSPs commonly pair it with ConnectBooster",
-            "There's no way to know — CloudRadial doesn't indicate anything"
+            "There's no way to know: CloudRadial doesn't indicate anything"
           ],
           correct: 2,
-          explanation: "CloudRadial is a client management platform (not a PSA), but MSPs using it are most likely to have ConnectBooster for payments. It's a warm signal — dig deeper to confirm, but ConnectBooster is your best first assumption."
+          explanation: "CloudRadial is a client management platform (not a PSA), but MSPs using it are most likely to have ConnectBooster for payments. It's a warm signal. Dig deeper to confirm, but ConnectBooster is your best first assumption."
         },
         {
           question: "Kaseya BMS is best described as...",
           options: [
-            "Kaseya's RMM tool — manages remote devices",
-            "Kaseya's native PSA — less common than Autotask, same Kaseya ecosystem",
+            "Kaseya's RMM tool: manages remote devices",
+            "Kaseya's native PSA: less common than Autotask, same Kaseya ecosystem",
             "A standalone billing platform owned by Kaseya",
             "ConnectWise's backup PSA product"
           ],
           correct: 1,
-          explanation: "Kaseya BMS is Kaseya's native PSA. It's less common than Autotask but operates the same way — ConnectBooster is the default payment tool, and MSPs using it are inside the Kaseya ecosystem. The same pitch applies: they're likely frustrated with Kaseya and open to alternatives."
+          explanation: "Kaseya BMS is Kaseya's native PSA. It's less common than Autotask but operates the same way. ConnectBooster is the default payment tool, and MSPs using it are inside the Kaseya ecosystem. The same pitch applies: they're likely frustrated with Kaseya and open to alternatives."
         }
       ]
     };
-
     // ─── Ecosystem Diagram ────────────────────────────────────────────────────
     function EcosystemDiagram() {
       const [active, setActive] = useState(null);
-
-      // All nodes described by id, display info, and rect bounds (in SVG coords)
       const nodeInfo = {
         psa:        { label:'PSA',         sub:'ConnectWise · Halo · Autotask',  color:'#1e3a5f', integrated:true,  desc:'The operational brain. Manages tickets, service agreements, invoices, and time tracking. This is where billing lives.' },
-        ap:         { label:'AP Platform', sub:'Alternative Payments',           color:'#2563eb', integrated:true,  desc:'The missing link. AP connects to BOTH the PSA and accounting software simultaneously. When a client pays, both systems update in real time — zero manual work.' },
+        ap:         { label:'AP Platform', sub:'Alternative Payments',           color:'#2563eb', integrated:true,  desc:'The missing link. AP connects to BOTH the PSA and accounting software simultaneously. When a client pays, both systems update in real time, zero manual work.' },
         accounting: { label:'Accounting',  sub:'QuickBooks · Xero',              color:'#059669', integrated:true,  desc:'Tracks money in and out. Handles payroll, taxes, and financial statements. Receives real-time payment updates directly from AP.' },
-        rmm:        { label:'RMM',         sub:'Remote Monitoring',              color:'#64748b', integrated:false, desc:"Monitors client devices and servers remotely. Not billing-related — AP doesn't integrate here. The RMM sits outside the payment workflow entirely." },
-        client:     { label:'MSP Client',  sub:'End Customer',                   color:'#7c3aed', integrated:true,  desc:'The business that pays the MSP. They receive a branded AP invoice with a payment link. One click to pay — AP handles all the reconciliation.' },
+        rmm:        { label:'RMM',         sub:'Remote Monitoring',              color:'#64748b', integrated:false, desc:"Monitors client devices and servers remotely. Not billing-related. AP doesn't integrate here. The RMM sits outside the payment workflow entirely." },
+        client:     { label:'MSP Client',  sub:'End Customer',                   color:'#7c3aed', integrated:true,  desc:'The business that pays the MSP. They receive a branded AP invoice with a payment link. One click to pay. AP handles all the reconciliation.' },
       };
-      // Rect positions {x,y,w,h} in a 780×410 viewBox
       const rects = {
         psa:        { x:30,  y:168, w:162, h:72 },
         ap:         { x:309, y:168, w:162, h:72 },
@@ -237,9 +282,6 @@
         rmm:        { x:309, y:42,  w:162, h:68 },
         client:     { x:309, y:318, w:162, h:68 },
       };
-      const cx = id => rects[id].x + rects[id].w / 2;
-      const cy = id => rects[id].y + rects[id].h / 2;
-
       const connections = [
         { x1:192, y1:204, x2:309, y2:204, color:'#2563eb', dashed:false, label:'invoice sync',    lx:251, ly:194 },
         { x1:471, y1:204, x2:588, y2:204, color:'#059669', dashed:false, label:'payment sync',    lx:530, ly:194 },
@@ -248,7 +290,6 @@
       ];
       const markerFor = c => c.color==='#2563eb'?'arr-blue':c.color==='#059669'?'arr-green':c.color==='#7c3aed'?'arr-purple':'arr-gray';
       const activeInfo = active ? nodeInfo[active] : null;
-
       return (
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
           <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#0a1628,#1e3a5f,#2563eb)'}}>
@@ -264,8 +305,6 @@
                   </marker>
                 ))}
               </defs>
-
-              {/* Connections */}
               {connections.map((c,i)=>(
                 <g key={i}>
                   <line x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2}
@@ -277,8 +316,6 @@
                     fontFamily="system-ui,sans-serif" opacity="0.9">{c.label}</text>
                 </g>
               ))}
-
-              {/* Nodes */}
               {Object.keys(rects).map(id=>{
                 const r = rects[id];
                 const info = nodeInfo[id];
@@ -286,24 +323,18 @@
                 const midX = r.x+r.w/2;
                 return (
                   <g key={id} onClick={()=>setActive(active===id?null:id)} style={{cursor:'pointer'}}>
-                    {/* shadow */}
                     <rect x={r.x+4} y={r.y+4} width={r.w} height={r.h} rx="13" fill="rgba(0,0,0,0.13)"/>
-                    {/* card */}
                     <rect x={r.x} y={r.y} width={r.w} height={r.h} rx="13"
                       fill={info.color}
                       stroke={isActive?'#93c5fd':'rgba(255,255,255,0.18)'}
                       strokeWidth={isActive?3:1}/>
-                    {/* active glow */}
                     {isActive&&<rect x={r.x-4} y={r.y-4} width={r.w+8} height={r.h+8} rx="17" fill="none" stroke="#bfdbfe" strokeWidth="1.5" opacity="0.7"/>}
-                    {/* label */}
                     <text x={midX} y={r.y+r.h/2-8} textAnchor="middle"
                       fill="white" fontSize={id==='ap'?'14.5':'13.5'} fontWeight="700"
                       fontFamily="system-ui,-apple-system,sans-serif">{info.label}</text>
-                    {/* sublabel */}
                     <text x={midX} y={r.y+r.h/2+13} textAnchor="middle"
                       fill="rgba(255,255,255,0.7)" fontSize="9.5"
                       fontFamily="system-ui,-apple-system,sans-serif">{info.sub}</text>
-                    {/* "AP integrates here" tag beneath PSA and Accounting */}
                     {(id==='psa'||id==='accounting')&&(
                       <text x={midX} y={r.y+r.h+17} textAnchor="middle"
                         fill="#2563eb" fontSize="9" fontStyle="italic"
@@ -313,8 +344,6 @@
                 );
               })}
             </svg>
-
-            {/* Legend */}
             <div className="flex flex-wrap gap-5 mt-1 mb-3 px-1">
               <div className="flex items-center gap-1.5 text-xs text-slate-500">
                 <svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="#2563eb" strokeWidth="2"/></svg>
@@ -325,8 +354,6 @@
                 Not integrated
               </div>
             </div>
-
-            {/* Info panel */}
             {activeInfo&&(
               <div className="p-4 rounded-xl border-2 border-blue-100 bg-blue-50 slide-in">
                 <div className="flex items-center gap-2 mb-2">
@@ -344,7 +371,6 @@
         </div>
       );
     }
-
     // ─── Invoice Flow ─────────────────────────────────────────────────────────
     function InvoiceFlow({ mode }) {
       const traditional = [
@@ -382,9 +408,10 @@
         </div>
       );
     }
-
     // ─── PSA Card ─────────────────────────────────────────────────────────────
-    function PSACard({ name, owner, processor, notes, color, isExpanded, onClick }) {
+    function PSACard({ name, owner, processor, notes, color, apIntegration, isExpanded, onClick }) {
+      const hasIntegration = apIntegration && apIntegration.startsWith('✅');
+      const noIntegration = apIntegration && apIntegration.startsWith('❌');
       return (
         <button onClick={onClick} className="w-full text-left rounded-2xl border-2 overflow-hidden transition-all duration-200" style={{borderColor:isExpanded?color:'#e2e8f0'}}>
           <div className="flex items-center gap-4 p-4" style={{backgroundColor:isExpanded?color:'#f8fafc'}}>
@@ -393,10 +420,16 @@
               <p className={`font-bold ${isExpanded?'text-white':'text-slate-800'}`}>{name}</p>
               <p className={`text-xs ${isExpanded?'text-white opacity-80':'text-slate-500'}`}>Owned by {owner}</p>
             </div>
+            {apIntegration && <span className={`text-xs font-bold px-2 py-1 rounded-lg flex-shrink-0 ${hasIntegration?'bg-green-100 text-green-800':noIntegration?'bg-red-100 text-red-800':'bg-amber-100 text-amber-800'}`} style={isExpanded?{opacity:0.9}:{}}>{hasIntegration?'AP Integrated':noIntegration?'No AP Integration':'Not a PSA'}</span>}
             <span className={`text-lg ${isExpanded?'text-white':'text-slate-400'}`}>{isExpanded?'▲':'▼'}</span>
           </div>
           {isExpanded&&(
             <div className="p-4 bg-white slide-in">
+              {apIntegration && (
+                <div className={`rounded-xl p-3 mb-3 ${hasIntegration?'bg-green-50 border border-green-200':noIntegration?'bg-red-50 border border-red-200':'bg-amber-50 border border-amber-200'}`}>
+                  <p className={`text-sm font-bold ${hasIntegration?'text-green-800':noIntegration?'text-red-800':'text-amber-800'}`}>{apIntegration}</p>
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-3 mb-3">
                 <div className="bg-slate-50 rounded-xl p-3">
                   <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide">Default Payment Tool</p>
@@ -404,7 +437,7 @@
                 </div>
                 <div className="bg-blue-50 rounded-xl p-3">
                   <p className="text-xs text-blue-500 font-semibold uppercase tracking-wide">AP Opportunity</p>
-                  <p className="text-sm font-bold text-blue-800 mt-1">Open to switching</p>
+                  <p className="text-sm font-bold text-blue-800 mt-1">{hasIntegration?'Direct replacement':noIntegration?'Accounting-only integration':'Depends on underlying PSA'}</p>
                 </div>
               </div>
               <p className="text-sm text-slate-600 leading-relaxed">{notes}</p>
@@ -413,7 +446,6 @@
         </button>
       );
     }
-
     // ─── Quiz Component ───────────────────────────────────────────────────────
     function QuizSection({ questions, moduleId }) {
       const [current, setCurrent] = useState(0);
@@ -422,7 +454,6 @@
       const [score, setScore] = useState(0);
       const [done, setDone] = useState(false);
       const q = questions[current];
-
       function pick(idx) {
         if (answered) return;
         setSelected(idx);
@@ -434,7 +465,6 @@
         else { setCurrent(c=>c+1); setSelected(null); setAnswered(false); }
       }
       function restart() { setCurrent(0); setSelected(null); setAnswered(false); setScore(0); setDone(false); }
-
       if (done) {
         const pct = Math.round((score/questions.length)*100);
         return (
@@ -484,7 +514,6 @@
         </div>
       );
     }
-
     // ─── Dual Integration Diagram ─────────────────────────────────────────────
     function DualIntegrationDiagram() {
       const [step, setStep] = useState(0);
@@ -542,13 +571,500 @@
         </div>
       );
     }
+    // ─── Invoicing Flow Module (NEW) ──────────────────────────────────────────
+    function InvoicingFlowModule() {
+      const [activeSection, setActiveSection] = useState('overview');
+      const [activeNode, setActiveNode] = useState(null);
+      const sections = [
+        {id:'overview', label:'Revenue Flow'},
+        {id:'invoice-types', label:'Invoice Types'},
+        {id:'integrations', label:'Integrations'},
+        {id:'sync-tools', label:'Sync Tools'},
+        {id:'language', label:'Language Guide'},
+      ];
+      return (
+        <div className="space-y-6 slide-in">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+            <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>The Invoicing Flow</h2>
+            <p className="text-slate-600 leading-relaxed">From ticket creation to payment capture: the complete MSP revenue flow with quoting and sync tool branches. Understanding this flow is critical for knowing exactly where AP plugs in.</p>
+          </div>
+          {/* Section tabs */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-3">
+            <div className="flex flex-wrap gap-1.5">
+              {sections.map(s=>(
+                <button key={s.id} onClick={()=>setActiveSection(s.id)}
+                  className="px-4 py-2 rounded-xl text-sm font-bold transition-all"
+                  style={{
+                    backgroundColor: activeSection===s.id ? '#0d9488' : '#f1f5f9',
+                    color: activeSection===s.id ? 'white' : '#475569'
+                  }}>
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
+          {/* Revenue Flow Overview */}
+          {activeSection==='overview' && (
+            <div className="space-y-5 slide-in">
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#0a1628,#134e4a,#0d9488)'}}>
+                  <h3 className="text-white font-bold text-lg">MSP Revenue Flow</h3>
+                  <p className="text-teal-200 text-sm mt-1">Every invoice starts with a ticket. Click each stage to learn more</p>
+                </div>
+                <div className="p-6">
+                  {/* Visual flow */}
+                  <div className="flex flex-wrap items-start justify-center gap-3 mb-6">
+                    {[
+                      {id:'ticket', icon:'🎫', label:'Ticket Created', sub:'in PSA', color:'#1e3a5f', desc:'Every invoice begins with a ticket in the PSA. The ticket tracks work done, time spent, and services delivered. This is the origin of all billing.'},
+                      {id:'psa', icon:'🏛️', label:'PSA Creates Invoice', sub:'from ticket data', color:'#0d9488', desc:'The PSA generates an invoice from ticket data: service agreements, time entries, project milestones, or ad-hoc charges. The invoice lives in the PSA first.'},
+                      {id:'sync', icon:'🔄', label:'Syncs to Accounting', sub:'or ERP system', color:'#7c3aed', desc:'The invoice syncs from the PSA to the accounting system (QuickBooks, Xero) or ERP (Business Central, Sage Intacct). This sync can happen via AP directly or through sync tools like WiseSync.'},
+                      {id:'ap', icon:'⚡', label:'AP Sends Invoice', sub:'payment link included', color:'#2563eb', desc:'AP sends the client a branded email with a payment link. The client portal shows full invoice history, supports autopay, and accepts ACH, credit card, or check.'},
+                      {id:'payment', icon:'💰', label:'Client Pays', sub:'via Client Portal', color:'#059669', desc:'The end-client pays online through the Client Portal. Payment data flows back through AP to update both the PSA and accounting system simultaneously, with zero manual reconciliation.'},
+                    ].map((node, i)=>(
+                      <div key={node.id} className="flex items-center gap-3">
+                        <button onClick={()=>setActiveNode(activeNode===node.id?null:node.id)}
+                          className={`flex flex-col items-center text-center flow-node rounded-2xl p-3 border-2 transition-all w-28 ${activeNode===node.id?'shadow-lg':'shadow-sm'}`}
+                          style={{borderColor: activeNode===node.id ? node.color : '#e2e8f0', backgroundColor: activeNode===node.id ? node.color+'10' : 'white'}}>
+                          <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl border-2" style={{borderColor:node.color, backgroundColor: node.color+'15'}}>{node.icon}</div>
+                          <p className="text-xs font-bold mt-2 text-slate-800 leading-tight">{node.label}</p>
+                          <p className="text-xs text-slate-500 leading-tight">{node.sub}</p>
+                        </button>
+                        {i<4 && <span className="text-xl font-bold text-teal-400 flex-shrink-0">→</span>}
+                      </div>
+                    ))}
+                  </div>
+                  {/* Info panel */}
+                  {activeNode && (
+                    <div className="p-4 rounded-xl border-2 border-teal-100 bg-teal-50 slide-in">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="font-bold text-slate-800">
+                          {[
+                            {id:'ticket', label:'Ticket Created'},
+                            {id:'psa', label:'PSA Creates Invoice'},
+                            {id:'sync', label:'Syncs to Accounting'},
+                            {id:'ap', label:'AP Sends Invoice'},
+                            {id:'payment', label:'Client Pays'},
+                          ].find(n=>n.id===activeNode)?.label}
+                        </p>
+                        <button onClick={()=>setActiveNode(null)} className="text-slate-400 text-xs hover:text-slate-600 px-2 py-0.5 rounded hover:bg-slate-200">✕ close</button>
+                      </div>
+                      <p className="text-slate-600 text-sm leading-relaxed">
+                        {[
+                          {id:'ticket', desc:'Every invoice begins with a ticket in the PSA. The ticket tracks work done, time spent, and services delivered. This is the origin of all billing.'},
+                          {id:'psa', desc:'The PSA generates an invoice from ticket data: service agreements, time entries, project milestones, or ad-hoc charges. The invoice lives in the PSA first.'},
+                          {id:'sync', desc:'The invoice syncs from the PSA to the accounting system (QuickBooks, Xero) or ERP (Business Central, Sage Intacct). This sync can happen via AP directly or through sync tools like WiseSync.'},
+                          {id:'ap', desc:'AP sends the client a branded email with a payment link. The client portal shows full invoice history, supports autopay, and accepts ACH, credit card, or check.'},
+                          {id:'payment', desc:'The end-client pays online through the Client Portal. Payment data flows back through AP to update both the PSA and accounting system simultaneously, with zero manual reconciliation.'},
+                        ].find(n=>n.id===activeNode)?.desc}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* Key principle */}
+              <div className="rounded-2xl border border-teal-200 p-5" style={{background:'linear-gradient(135deg,#f0fdfa,#ecfdf5)'}}>
+                <h3 className="font-black text-teal-900 text-sm mb-2">💡 The Core Rule</h3>
+                <p className="text-teal-800 text-sm leading-relaxed"><strong>Every invoice has a ticket.</strong> The ticket is created in the PSA and syncs to the accounting system or ERP. This is the starting point for all MSP revenue, whether it's a one-time project, recurring managed service, or ad-hoc break-fix job.</p>
+              </div>
+            </div>
+          )}
 
+          {/* Invoice Types */}
+          {activeSection==='invoice-types' && (
+            <div className="space-y-4 slide-in">
+              <div className="grid md:grid-cols-3 gap-4">
+                {[
+                  {
+                    icon:'📝', title:'Quoting Tools', subtitle:'Branches off Projects',
+                    color:'#7c3aed', bg:'#f5f3ff',
+                    desc:'Quotes flow into Projects/ad-hoc invoices once approved. Some quoting tools integrate with PSAs, others don\'t.',
+                    details:'CPQ workflows where the MSP builds a proposal, gets approval, then generates invoices from the approved quote.'
+                  },
+                  {
+                    icon:'🛠️', title:'Projects / Ad-Hoc', subtitle:'One-time payments',
+                    color:'#d97706', bg:'#fffbeb',
+                    desc:'One-time payments, break-fix work, or invoices that are broken up but not recurring.',
+                    details:'Think hardware purchases, one-off projects, emergency break-fix jobs, or phased project billing. These are non-recurring but still flow through the PSA ticket system.'
+                  },
+                  {
+                    icon:'🔁', title:'Recurring', subtitle:'Monthly managed services',
+                    color:'#059669', bg:'#ecfdf5',
+                    desc:'Monthly fee that scales with services: support hours, endpoints, users, etc.',
+                    details:'The bread and butter of MSP revenue. Monthly recurring invoices tied to service agreements in the PSA. These scale up/down based on the number of endpoints, users, or service tiers the client has.'
+                  },
+                ].map(t=>(
+                  <div key={t.title} className="bg-white rounded-2xl border-2 overflow-hidden" style={{borderColor:t.color+'40'}}>
+                    <div className="p-4" style={{backgroundColor:t.bg}}>
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl">{t.icon}</span>
+                        <div>
+                          <p className="font-black text-slate-800">{t.title}</p>
+                          <p className="text-xs text-slate-500">{t.subtitle}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 space-y-3">
+                      <p className="text-sm text-slate-700 leading-relaxed">{t.desc}</p>
+                      <div className="bg-slate-50 rounded-xl p-3">
+                        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mb-1">What This Looks Like</p>
+                        <p className="text-xs text-slate-600 leading-relaxed">{t.details}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-white rounded-2xl border border-slate-200 p-5">
+                <h3 className="font-black text-slate-800 mb-4">How They Connect</h3>
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <div className="bg-purple-50 border border-purple-200 rounded-xl px-4 py-2 text-center">
+                    <p className="text-sm font-bold text-purple-700">Quoting Tools</p>
+                    <p className="text-xs text-purple-500">Proposals & CPQ</p>
+                  </div>
+                  <span className="text-purple-400 font-bold">→</span>
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2 text-center">
+                    <p className="text-sm font-bold text-amber-700">Projects / Ad-Hoc</p>
+                    <p className="text-xs text-amber-500">Approved quotes become invoices</p>
+                  </div>
+                  <span className="text-slate-300 font-bold text-2xl mx-2">+</span>
+                  <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-2 text-center">
+                    <p className="text-sm font-bold text-green-700">Recurring</p>
+                    <p className="text-xs text-green-500">Monthly managed services</p>
+                  </div>
+                  <span className="text-teal-400 font-bold">→</span>
+                  <div className="bg-teal-50 border-2 border-teal-300 rounded-xl px-4 py-2 text-center">
+                    <p className="text-sm font-black text-teal-700">PSA Invoice</p>
+                    <p className="text-xs text-teal-500">All paths lead here</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Integrations Map */}
+          {activeSection==='integrations' && (
+            <div className="space-y-4 slide-in">
+              {/* Quoting Tools */}
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div className="px-5 py-3 border-b border-slate-100" style={{backgroundColor:'#f5f3ff'}}>
+                  <h3 className="font-black text-purple-900">📝 Quoting Tools</h3>
+                  <p className="text-purple-600 text-xs">CPQ & proposal tools that feed into invoicing</p>
+                </div>
+                <div className="p-5">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="integration-badge" style={{backgroundColor:'#dcfce7', color:'#15803d'}}>✓ Integrated</span>
+                      </div>
+                      <div className="space-y-2">
+                        {['CPQ (ConnectWise/CW)', 'Quoter', 'QuoteWerks'].map(t=>(
+                          <div key={t} className="flex items-center gap-2 bg-green-50 rounded-lg px-3 py-2 border border-green-200">
+                            <span className="text-green-600 text-sm">✅</span>
+                            <span className="text-sm font-semibold text-slate-700">{t}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="integration-badge" style={{backgroundColor:'#fef2f2', color:'#dc2626'}}>✗ Not Integrated</span>
+                      </div>
+                      <div className="space-y-2">
+                        {['Zomentum', 'Quote Manager (Kaseya)'].map(t=>(
+                          <div key={t} className="flex items-center gap-2 bg-red-50 rounded-lg px-3 py-2 border border-red-200">
+                            <span className="text-red-500 text-sm">❌</span>
+                            <span className="text-sm font-semibold text-slate-700">{t}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-3 italic">Quotes flow into Projects / Ad-hoc invoices once approved.</p>
+                </div>
+              </div>
+
+              {/* PSA Platforms */}
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div className="px-5 py-3 border-b border-slate-100" style={{backgroundColor:'#eff6ff'}}>
+                  <h3 className="font-black text-blue-900">🏛️ PSA: Ticket & Invoice Creation</h3>
+                  <p className="text-blue-600 text-xs">Where tickets and invoices are born</p>
+                </div>
+                <div className="p-5">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="integration-badge" style={{backgroundColor:'#dcfce7', color:'#15803d'}}>✓ We Integrate With</span>
+                      </div>
+                      <div className="space-y-2">
+                        {[
+                          {name:'ConnectWise (CW)', note:'Largest PSA in the market'},
+                          {name:'Autotask (AT)', note:'Owned by Kaseya'},
+                          {name:'HaloPSA', note:'Exclusive AP integration'},
+                          {name:'SuperOps', note:'Modern AI-focused PSA'},
+                        ].map(t=>(
+                          <div key={t.name} className="flex items-center gap-2 bg-green-50 rounded-lg px-3 py-2 border border-green-200">
+                            <span className="text-green-600 text-sm">✅</span>
+                            <div>
+                              <span className="text-sm font-semibold text-slate-700">{t.name}</span>
+                              <span className="text-xs text-slate-500 ml-2">{t.note}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="integration-badge" style={{backgroundColor:'#fef2f2', color:'#dc2626'}}>✗ Not Integrated</span>
+                      </div>
+                      <div className="space-y-2">
+                        {['Syncro', 'Aterra', 'Kaseya BMS', 'NinjaOne', 'N-able', 'RepairShopr'].map(t=>(
+                          <div key={t} className="flex items-center gap-2 bg-red-50 rounded-lg px-3 py-2 border border-red-200">
+                            <span className="text-red-500 text-sm">❌</span>
+                            <span className="text-sm font-semibold text-slate-700">{t}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Accounting & ERPs */}
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div className="px-5 py-3 border-b border-slate-100" style={{backgroundColor:'#ecfdf5'}}>
+                  <h3 className="font-black text-green-900">📊 Accounting Systems & ERPs</h3>
+                  <p className="text-green-600 text-xs">Where invoices sync to and payments are recorded</p>
+                </div>
+                <div className="p-5">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Small & Mid-Market MSPs</p>
+                      <div className="space-y-2">
+                        {[
+                          {name:'QuickBooks Online (QBO)', tag:'New, modern', color:'#059669'},
+                          {name:'QuickBooks Desktop (QBD)', tag:'Being sunsetted', color:'#d97706'},
+                          {name:'Xero', tag:null, color:'#059669'},
+                          {name:'FreshBooks', tag:null, color:'#059669'},
+                          {name:'Zoho Books', tag:null, color:'#059669'},
+                        ].map(a=>(
+                          <div key={a.name} className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2 border border-slate-200">
+                            <span className="text-sm">💰</span>
+                            <span className="text-sm font-semibold text-slate-700">{a.name}</span>
+                            {a.tag && <span className="text-xs px-2 py-0.5 rounded-full font-semibold ml-auto" style={{backgroundColor:a.color+'18', color:a.color}}>{a.tag}</span>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Enterprise & Multi-Entity MSPs</p>
+                      <div className="space-y-2">
+                        {[
+                          {name:'Business Central / MS Dynamics 365', abbr:'BC / MS365'},
+                          {name:'Sage Intacct', abbr:null},
+                          {name:'NetSuite', abbr:null},
+                        ].map(e=>(
+                          <div key={e.name} className="flex items-center gap-2 bg-slate-50 rounded-lg px-3 py-2 border border-slate-200">
+                            <span className="text-sm">🏢</span>
+                            <span className="text-sm font-semibold text-slate-700">{e.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-3 bg-blue-50 rounded-xl p-3 border border-blue-200">
+                        <p className="text-xs text-blue-700 leading-relaxed"><strong>ERP deals</strong> tend to be enterprise and multi-entity MSPs. These are larger, more complex accounts.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Sync Tools */}
+          {activeSection==='sync-tools' && (
+            <div className="space-y-4 slide-in">
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#0a1628,#1e3a5f,#2563eb)'}}>
+                  <h3 className="text-white font-bold text-lg">Sync Tools: Branches off ConnectWise</h3>
+                  <p className="text-blue-200 text-sm mt-1">When AP can replace them and when the MSP should keep them</p>
+                </div>
+                <div className="p-6">
+                  <div className="grid md:grid-cols-2 gap-5">
+                    <div className="rounded-2xl border-2 border-green-200 p-5 bg-green-50">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center">
+                          <span className="text-white text-xl">✅</span>
+                        </div>
+                        <div>
+                          <p className="font-black text-green-900">AP Can Replace</p>
+                          <p className="text-green-700 text-xs">If only used for payments & invoicing</p>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        {['WiseSync', 'Mobius / Gozynta'].map(tool=>(
+                          <div key={tool} className="bg-white rounded-xl p-3 border border-green-200">
+                            <p className="font-bold text-slate-800 text-sm">{tool}</p>
+                            <p className="text-xs text-slate-500 mt-1">Syncs ConnectWise invoices to QuickBooks</p>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-4 bg-green-100 rounded-xl p-3">
+                        <p className="text-xs text-green-800 leading-relaxed"><strong>Key selling point:</strong> If the MSP only uses WiseSync or Gozynta to sync invoices and payment data to QuickBooks, AP replaces that sync entirely. That's one fewer tool and one fewer bill per month.</p>
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border-2 border-amber-200 p-5 bg-amber-50">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center">
+                          <span className="text-white text-xl">⚠️</span>
+                        </div>
+                        <div>
+                          <p className="font-black text-amber-900">Keep the Sync Tool If...</p>
+                          <p className="text-amber-700 text-xs">Used for more than just invoicing</p>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        {[
+                          {use:'Procurement', desc:'Syncing purchase orders and vendor data'},
+                          {use:'Expenses', desc:'Syncing expense reports and receipts'},
+                          {use:'Product Inventory', desc:'Syncing hardware/product catalog data'},
+                        ].map(u=>(
+                          <div key={u.use} className="bg-white rounded-xl p-3 border border-amber-200">
+                            <p className="font-bold text-slate-800 text-sm">{u.use}</p>
+                            <p className="text-xs text-slate-500 mt-1">{u.desc}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-4 bg-amber-100 rounded-xl p-3">
+                        <p className="text-xs text-amber-800 leading-relaxed"><strong>Discovery question:</strong> "Beyond invoice syncing, what else do you use WiseSync/Gozynta for?" If the answer is procurement, expenses, or inventory, they should keep the sync tool for those workflows.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Talk track */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5">
+                <h3 className="font-black text-slate-800 mb-3">📞 Sync Tool Talk Track</h3>
+                <div className="space-y-3">
+                  <div className="rounded-xl p-4 bg-blue-50 border border-blue-200">
+                    <p className="text-xs font-bold text-blue-700 uppercase tracking-wide mb-2">Opening</p>
+                    <p className="text-sm text-slate-700 italic leading-relaxed">"I noticed you're on ConnectWise. Are you using WiseSync or Gozynta to push invoice data to QuickBooks?"</p>
+                  </div>
+                  <div className="rounded-xl p-4 bg-blue-50 border border-blue-200">
+                    <p className="text-xs font-bold text-blue-700 uppercase tracking-wide mb-2">If Yes</p>
+                    <p className="text-sm text-slate-700 italic leading-relaxed">"AP integrates directly with both ConnectWise and QuickBooks simultaneously. If you're only using WiseSync for invoice and payment syncing, we can replace it entirely. One less tool and one less bill each month."</p>
+                  </div>
+                  <div className="rounded-xl p-4 bg-amber-50 border border-amber-200">
+                    <p className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-2">Important Qualifier</p>
+                    <p className="text-sm text-slate-700 italic leading-relaxed">"Quick question though: do you also use WiseSync for procurement, expenses, or product inventory? If so, you'd want to keep it for those workflows. But the payment and invoice syncing? AP handles that natively."</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Language Guide */}
+          {activeSection==='language' && (
+            <div className="space-y-4 slide-in">
+              <div className="rounded-2xl border-2 border-teal-200 p-6" style={{background:'linear-gradient(135deg,#f0fdfa,#ecfdf5)'}}>
+                <h3 className="font-black text-teal-900 text-lg mb-2">🗣️ Language to Be Mindful Of</h3>
+                <p className="text-teal-700 text-sm leading-relaxed">Using the right terminology builds credibility with MSPs instantly. Using the wrong words makes you sound like you don't understand their world.</p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                {[
+                  {
+                    term:'Partner',
+                    meaning:'The MSP',
+                    icon:'🤝',
+                    color:'#1e3a5f',
+                    example:'"We currently work with over 600 partners across the US."',
+                    wrong:'Don\'t say "customer" or "user" when referring to the MSP.'
+                  },
+                  {
+                    term:'Client',
+                    meaning:'The MSP\'s end-client',
+                    icon:'🏢',
+                    color:'#7c3aed',
+                    example:'"Your clients will receive a branded payment link via email."',
+                    wrong:'Don\'t say "their customers." MSPs always call them "clients."'
+                  },
+                  {
+                    term:'Admin / Partner Dashboard',
+                    meaning:'MSP\'s view of the AP platform',
+                    icon:'📊',
+                    color:'#2563eb',
+                    example:'"From your Admin Dashboard, you can see every outstanding invoice and payment status."',
+                    wrong:'Don\'t call it "the backend" or "admin panel." It\'s the Partner Dashboard.'
+                  },
+                  {
+                    term:'Client Portal',
+                    meaning:'End-client\'s payment view',
+                    icon:'💳',
+                    color:'#059669',
+                    example:'"The Client Portal is where your clients log in to view invoices and make payments."',
+                    wrong:'Don\'t say "checkout page" or "payment page." It\'s a full-featured portal.'
+                  },
+                ].map(l=>(
+                  <div key={l.term} className="bg-white rounded-2xl border-2 overflow-hidden" style={{borderColor:l.color+'40'}}>
+                    <div className="p-4 flex items-center gap-3" style={{backgroundColor:l.color, borderBottom:'2px solid '+l.color}}>
+                      <span className="text-2xl">{l.icon}</span>
+                      <div>
+                        <p className="text-white font-black text-lg">{l.term}</p>
+                        <p className="text-white text-sm opacity-80">= {l.meaning}</p>
+                      </div>
+                    </div>
+                    <div className="p-4 space-y-3">
+                      <div className="bg-green-50 rounded-xl p-3 border border-green-200">
+                        <p className="text-xs font-bold text-green-700 mb-1">✅ Use it like this</p>
+                        <p className="text-sm text-slate-700 italic">{l.example}</p>
+                      </div>
+                      <div className="bg-red-50 rounded-xl p-3 border border-red-200">
+                        <p className="text-xs font-bold text-red-600 mb-1">❌ Avoid</p>
+                        <p className="text-sm text-slate-600">{l.wrong}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-white rounded-2xl border border-slate-200 p-5">
+                <h3 className="font-black text-slate-800 mb-3">Quick Reference</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b-2 border-slate-200">
+                        <th className="text-left py-3 pr-4 text-slate-500 font-semibold">When you mean...</th>
+                        <th className="text-left py-3 pr-4 font-bold text-green-700">✅ Say this</th>
+                        <th className="text-left py-3 font-bold text-red-600">❌ Not this</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        ['The MSP', 'Partner', 'Customer / User / Client'],
+                        ['The MSP\'s customer', 'Client / End-client', 'User / Their customer'],
+                        ['MSP\'s AP view', 'Admin Dashboard / Partner Dashboard', 'Backend / Admin panel'],
+                        ['Client\'s payment view', 'Client Portal', 'Checkout page / Payment page'],
+                        ['Monthly service fee', 'MRR / Managed services', 'Subscription'],
+                      ].map(([meaning, right, wrong])=>(
+                        <tr key={meaning} className="border-b border-slate-100">
+                          <td className="py-3 pr-4 text-slate-600">{meaning}</td>
+                          <td className="py-3 pr-4 font-semibold text-green-700">{right}</td>
+                          <td className="py-3 text-red-500 line-through opacity-70">{wrong}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Quiz */}
+          <QuizSection questions={QUIZZES['invoicing-flow']} moduleId="invoicing-flow"/>
+        </div>
+      );
+    }
     // ─── Competitive Playbook Component ──────────────────────────────────────
     function CompetitivePlaybook() {
       const [activeCo, setActiveCo] = React.useState('cb');
       const [activeTab, setActiveTab] = React.useState('talk');
-
       const COMPS = [
         {
           id:'cb', name:'ConnectBooster', short:'CB', color:'#dc2626',
@@ -558,17 +1074,17 @@
           ],
           talks:[
             {label:'Intro', text:'Noticed the ConnectBooster portal on your website. What we\'ve been hearing is that MSPs feel trapped with the 3-year agreements, and since the Kaseya acquisition the product just isn\'t what it used to be. Is that the same for you?'},
-            {label:'Purpose', text:'CB is actually 3 systems: Clearent for CC processing, BNG for ACH, and ConnectBooster for software — 3 bills every month. Alternative Payments is an all-in-one solution: 1 flat-rate subscription, no transaction fees, no hidden costs.'}
+            {label:'Purpose', text:'CB is actually 3 systems: Clearent for CC processing, BNG for ACH, and ConnectBooster for software. That\'s 3 bills every month. Alternative Payments is an all-in-one solution: 1 flat-rate subscription, no transaction fees, no hidden costs.'}
           ],
           diffs:[
-            {t:'Pricing', ap:'1 flat monthly subscription — no hidden fees or transaction costs', them:'3 separate bills: CB software ($119-$1k/mo) + Clearent CC fees (2.9-3.5%) + BNG ACH fees'},
-            {t:'Client Adoption', ap:'Accounts auto-created — clients pay immediately with zero friction', them:'New clients load as "revoked" — MSP must manually approve each account before they can pay'},
-            {t:'CC Surcharging', ap:'Fee passed directly to end-client at checkout — zero backend reconciliation needed', them:'Clearent creates a separate invoice for the CC fee — MSP must manually reconcile'},
-            {t:'Ownership', ap:'Independent company — 100% focused on MSP payments', them:'Owned by Kaseya — prices increase without product investment; support quality declining'}
+            {t:'Pricing', ap:'1 flat monthly subscription, no hidden fees or transaction costs', them:'3 separate bills: CB software ($119-$1k/mo) + Clearent CC fees (2.9-3.5%) + BNG ACH fees'},
+            {t:'Client Adoption', ap:'Accounts auto-created. Clients pay immediately with zero friction', them:'New clients load as "revoked." MSP must manually approve each account before they can pay'},
+            {t:'CC Surcharging', ap:'Fee passed directly to end-client at checkout, zero backend reconciliation needed', them:'Clearent creates a separate invoice for the CC fee. MSP must manually reconcile'},
+            {t:'Ownership', ap:'Independent company, 100% focused on MSP payments', them:'Owned by Kaseya. Prices increase without product investment; support quality declining'}
           ],
           objections:[
             {o:'"We\'re locked into a 3-year agreement."', r:'Calculate your true monthly cost: CB software + Clearent + BNG. Many MSPs find the savings over the remaining contract term justify switching now. Let\'s look at the numbers together.'},
-            {o:'"Kaseya bundles CB with our other tools."', r:'The bundle hides the real cost — Clearent CC fees and BNG ACH fees are NOT included. Ask yourself: what am I actually paying in transaction fees each month? That\'s the number that matters.'}
+            {o:'"Kaseya bundles CB with our other tools."', r:'The bundle hides the real cost. Clearent CC fees and BNG ACH fees are NOT included. Ask yourself: what am I actually paying in transaction fees each month? That\'s the number that matters.'}
           ],
           proof:[
             {co:'Simple Communications', r:'95% reduction in accounts receivable', url:'https://www.alternativepayments.io/customer-stories/'},
@@ -582,17 +1098,17 @@
           loom:[],
           talks:[
             {label:'Intro', text:'Noticed you\'re using WisePay and wanted to give you a call. We\'re working with a lot of MSPs trying to get better control over monthly costs and drive more portal adoption.'},
-            {label:'Purpose', text:'WisePay is actually multiple systems: Global Payments for CC, WisePay for software, WiseSync for syncing — 3 bills/month. AP replaces all of it with 1 flat subscription. And if you only use WiseSync for invoice syncing to QBO, we can replace WiseSync too.'}
+            {label:'Purpose', text:'WisePay is actually multiple systems: Global Payments for CC, WisePay for software, WiseSync for syncing. That\'s 3 bills/month. AP replaces all of it with 1 flat subscription. And if you only use WiseSync for invoice syncing to QBO, we can replace WiseSync too.'}
           ],
           diffs:[
-            {t:'Adoption', ap:'70%+ average adoption — no account creation needed, clients just enter email and pay', them:'Clients must self-create account, then MSP approves, then they can pay. Typical adoption under 40%.'},
-            {t:'CC Processing', ap:'All-in-one — CC fee passed directly to end-client, no reconciliation needed', them:'Uses Global Payments (3rd party). MSP signs separate agreement. Passing CC fees is complex and manual.'},
+            {t:'Adoption', ap:'70%+ average adoption, no account creation needed, clients just enter email and pay', them:'Clients must self-create account, then MSP approves, then they can pay. Typical adoption under 40%.'},
+            {t:'CC Processing', ap:'All-in-one. CC fee passed directly to end-client, no reconciliation needed', them:'Uses Global Payments (3rd party). MSP signs separate agreement. Passing CC fees is complex and manual.'},
             {t:'Pricing', ap:'1 flat monthly subscription', them:'Low SaaS fee hides heavy ACH/CC transaction fees from Global Payments (often bundled with WiseSync)'},
             {t:'Onboarding', ap:'Full setup in 1 hour. Dedicated CSM, payment data migration included.', them:'Onboarding often takes 3-4 months. Lengthy Global Payments approval. Many MSPs give up entirely.'},
             {t:'WiseSync Replacement', ap:'Can replace both WisePay AND WiseSync if MSP only syncs invoices to QBO', them:'Separate sync tool often bundled. Confirm what data they sync beyond invoices before claiming replacement.'}
           ],
           objections:[
-            {o:'"WisePay is free with our ConnectWise bundle."', r:'The SaaS fee may be free, but ACH and CC transaction fees from Global Payments are not — those can run hundreds per month. Let\'s calculate your true all-in cost.'},
+            {o:'"WisePay is free with our ConnectWise bundle."', r:'The SaaS fee may be free, but ACH and CC transaction fees from Global Payments are not. Those can run hundreds per month. Let\'s calculate your true all-in cost.'},
             {o:'"We\'re currently being onboarded with WisePay."', r:'Many clients in active WisePay onboarding come to us after months of delays. Our onboarding is 1 hour start to finish. Would you be open to a quick comparison before committing?'}
           ],
           proof:[
@@ -605,20 +1121,20 @@
           loom:[],
           talks:[
             {label:'Intro', text:'Noticed you\'re using Stripe and wanted to give you a call. We\'re working with MSPs trying to better integrate their systems and give clients a real billing portal.'},
-            {label:'Purpose', text:'We work with 600+ MSPs, and the key driver to switch from Stripe is wanting a white-labelled customer portal directly integrated into the PSA — something Stripe simply cannot provide.'}
+            {label:'Purpose', text:'We work with 600+ MSPs, and the key driver to switch from Stripe is wanting a white-labelled customer portal directly integrated into the PSA, something Stripe simply cannot provide.'}
           ],
           diffs:[
-            {t:'Customer Portal', ap:'White-labelled portal — SSO/passwordless, full invoice history, autopay, user management', them:'No white-labeled customer portal. Clients can\'t view invoice history or update payment methods.'},
-            {t:'PSA Integration', ap:'Native integrations built for MSPs — pulls PSA invoice PDFs + auto-reconciles accounting simultaneously', them:'No native PSA integration (exception: HaloPSA). No dual PSA + accounting integration.'},
-            {t:'Autopay', ap:'Autopay tied to PSA agreement — handles fluctuating monthly managed service costs automatically', them:'Subscription payments not tied to PSA agreement. Can\'t handle variable managed service costs.'},
-            {t:'Costs', ap:'Flat subscription + free ACH + CC fee passed to end-client by default', them:'Per-transaction fees for ACH and CC. No native CC surcharging — must manually add line items to invoices.'}
+            {t:'Customer Portal', ap:'White-labelled portal: SSO/passwordless, full invoice history, autopay, user management', them:'No white-labeled customer portal. Clients can\'t view invoice history or update payment methods.'},
+            {t:'PSA Integration', ap:'Native integrations built for MSPs. Pulls PSA invoice PDFs + auto-reconciles accounting simultaneously', them:'No native PSA integration (exception: HaloPSA). No dual PSA + accounting integration.'},
+            {t:'Autopay', ap:'Autopay tied to PSA agreement, handles fluctuating monthly managed service costs automatically', them:'Subscription payments not tied to PSA agreement. Can\'t handle variable managed service costs.'},
+            {t:'Costs', ap:'Flat subscription + free ACH + CC fee passed to end-client by default', them:'Per-transaction fees for ACH and CC. No native CC surcharging. Must manually add line items to invoices.'}
           ],
           objections:[
-            {o:'"We use Stripe through HaloPSA."', r:'Stripe\'s HaloPSA integration is basic — it doesn\'t give clients a portal, can\'t pass CC fees automatically, and doesn\'t reconcile to your accounting software. AP does all three natively.'},
-            {o:'"Stripe is easy — I just input my client\'s credit card."', r:'That\'s actually a PCI compliance concern — if you can access client payment details, they\'re not stored securely. AP stores all payment data in PCI-compliant encrypted vaults that only the client can access.'}
+            {o:'"We use Stripe through HaloPSA."', r:'Stripe\'s HaloPSA integration is basic. It doesn\'t give clients a portal, can\'t pass CC fees automatically, and doesn\'t reconcile to your accounting software. AP does all three natively.'},
+            {o:'"Stripe is easy. I just input my client\'s credit card."', r:'That\'s actually a PCI compliance concern. If you can access client payment details, they\'re not stored securely. AP stores all payment data in PCI-compliant encrypted vaults that only the client can access.'}
           ],
           proof:[
-            {co:'RepowerIT', r:'Eliminated billing errors, captured invoice amounts correctly — had been extremely unhappy with Stripe (HaloPSA + QBO)', url:'#'},
+            {co:'RepowerIT', r:'Eliminated billing errors, captured invoice amounts correctly. Had been extremely unhappy with Stripe (HaloPSA + QBO)', url:'#'},
             {co:'MicroSky Managed Services', r:'Significantly boosted autopay adoption (Syncro + QBO)', url:'#'}
           ]
         },
@@ -627,15 +1143,15 @@
           loom:[],
           talks:[
             {label:'Intro', text:'Noticed you\'re using Melio and wanted to give you a call. We\'re working with a lot of MSPs trying to integrate more of their systems and reduce manual billing work.'},
-            {label:'Purpose', text:'We work with 600+ MSPs, and the key driver to switch from Melio is wanting a customer portal integrated directly into the PSA — plus eliminating per-transaction ACH fees that add up fast.'}
+            {label:'Purpose', text:'We work with 600+ MSPs, and the key driver to switch from Melio is wanting a customer portal integrated directly into the PSA, plus eliminating per-transaction ACH fees that add up fast.'}
           ],
           diffs:[
-            {t:'Costs', ap:'Flat subscription + free ACH + native CC surcharging to end-client', them:'Per-transaction ACH fees up to 1% + CC fees. No native CC surcharging — must add manual invoice line items.'},
-            {t:'PSA Integration', ap:'Dual integration: PSA + accounting software simultaneously', them:'Accounting integrations only (Xero/QBO). No PSA integration — data must be manually duplicated.'},
-            {t:'Autopay', ap:'Autopay tied to PSA agreement — handles variable monthly managed service amounts', them:'No autopay tied to PSA agreements. Can\'t support fluctuating managed service costs.'}
+            {t:'Costs', ap:'Flat subscription + free ACH + native CC surcharging to end-client', them:'Per-transaction ACH fees up to 1% + CC fees. No native CC surcharging. Must add manual invoice line items.'},
+            {t:'PSA Integration', ap:'Dual integration: PSA + accounting software simultaneously', them:'Accounting integrations only (Xero/QBO). No PSA integration. Data must be manually duplicated.'},
+            {t:'Autopay', ap:'Autopay tied to PSA agreement, handles variable monthly managed service amounts', them:'No autopay tied to PSA agreements. Can\'t support fluctuating managed service costs.'}
           ],
           objections:[
-            {o:'"It\'s literally free. Worst case my clients send a check."', r:'Melio\'s ACH fees add up fast. Plus — clients not using the portal fall back to checks, meaning you\'re acting as the bank for 30+ days. Factor in reconciliation labor and "free" becomes quite expensive.'}
+            {o:'"It\'s literally free. Worst case my clients send a check."', r:'Melio\'s ACH fees add up fast. Plus, clients not using the portal fall back to checks, meaning you\'re acting as the bank for 30+ days. Factor in reconciliation labor and "free" becomes quite expensive.'}
           ],
           proof:[
             {co:'Avid Practice', r:'Moved from Melio + Checks + QBP to AP. Boosted autopay, brought check-payers online. (HaloPSA + QBO, 2024)', url:'#'}
@@ -649,16 +1165,16 @@
           ],
           talks:[
             {label:'Intro', text:'I noticed the BenjiPays portal on your website. Many MSPs started with BenjiPays due to cheap subscription costs, but quickly realized the hidden transaction costs keep increasing. Is that something you\'ve noticed?'},
-            {label:'Purpose', text:'The shift we\'re seeing is MSPs replacing BenjiPays with full AR platforms — one portal for billing, payments, and collections, fully synced with both PSA and accounting. It\'s about full control over monthly fees, automations for growth, and trust in the integration accuracy.'}
+            {label:'Purpose', text:'The shift we\'re seeing is MSPs replacing BenjiPays with full AR platforms: one portal for billing, payments, and collections, fully synced with both PSA and accounting. It\'s about full control over monthly fees, automations for growth, and trust in the integration accuracy.'}
           ],
           diffs:[
-            {t:'Dual Integration', ap:'Integrates with PSA + accounting software simultaneously', them:'No dual integration — requires manual updates to keep PSA and accounting in sync on payment status.'},
-            {t:'CC Processing', ap:'All-in-one — CC processing built in, start immediately', them:'No built-in CC processor — MSP must source, evaluate, and integrate their own CC processor separately.'},
-            {t:'Support', ap:'White-glove service for every customer regardless of plan size', them:'Support quality varies by tier — dedicated CX manager only on highest (most expensive) plans.'},
-            {t:'Autopay Rules', ap:'Autopay tied to PSA agreement types, configurable per customer', them:'Only global autopay rules based on QBO/Xero invoices — no PSA agreement-based autopay.'}
+            {t:'Dual Integration', ap:'Integrates with PSA + accounting software simultaneously', them:'No dual integration. Requires manual updates to keep PSA and accounting in sync on payment status.'},
+            {t:'CC Processing', ap:'All-in-one. CC processing built in, start immediately', them:'No built-in CC processor. MSP must source, evaluate, and integrate their own CC processor separately.'},
+            {t:'Support', ap:'White-glove service for every customer regardless of plan size', them:'Support quality varies by tier. Dedicated CX manager only on highest (most expensive) plans.'},
+            {t:'Autopay Rules', ap:'Autopay tied to PSA agreement types, configurable per customer', them:'Only global autopay rules based on QBO/Xero invoices. No PSA agreement-based autopay.'}
           ],
           objections:[
-            {o:'"We just switched from ConnectBooster and don\'t want to switch again."', r:'Completely understand — switching takes effort. But let\'s look at the specific gaps: no dual integration, no built-in CC processor, tiered support. These become bigger friction points as you scale. Better to evaluate now.'}
+            {o:'"We just switched from ConnectBooster and don\'t want to switch again."', r:'Completely understand. Switching takes effort. But let\'s look at the specific gaps: no dual integration, no built-in CC processor, tiered support. These become bigger friction points as you scale. Better to evaluate now.'}
           ],
           proof:[
             {co:'Fusion One Technologies', r:'Absorbed CC fees, automated email reminders, improved autopay (CW + QBO, June 2025)', url:'#'}
@@ -668,11 +1184,11 @@
           id:'fp', name:'FlexPoint', short:'FP', color:'#7c3aed',
           loom:[],
           talks:[
-            {label:'Intro', text:'I saw the FlexPoint portal on your website. Some feedback I\'ve been hearing is that MSPs are frustrated with the lack of support when issues arise — things like payment status or sync errors can take days to resolve. How has that experience been for you?'},
-            {label:'Purpose', text:'The most common FlexPoint issues are duplicate invoices, deposits not reconciling, and hidden fees. AP\'s primary differentiators here are support quality and data accuracy — that\'s what wins deals.'}
+            {label:'Intro', text:'I saw the FlexPoint portal on your website. Some feedback I\'ve been hearing is that MSPs are frustrated with the lack of support when issues arise. Things like payment status or sync errors can take days to resolve. How has that experience been for you?'},
+            {label:'Purpose', text:'The most common FlexPoint issues are duplicate invoices, deposits not reconciling, and hidden fees. AP\'s primary differentiators here are support quality and data accuracy. That\'s what wins deals.'}
           ],
           diffs:[
-            {t:'Support', ap:'Your own CSM + sales rep + in-portal live support. Customer Success is AP\'s largest team.', them:'Support is slow — simple issues like payment status or sync errors can take days to resolve.'},
+            {t:'Support', ap:'Your own CSM + sales rep + in-portal live support. Customer Success is AP\'s largest team.', them:'Support is slow. Simple issues like payment status or sync errors can take days to resolve.'},
             {t:'Data Accuracy', ap:'Clean, reliable sync between portal and accounting software', them:'Common complaints: duplicate invoices, deposit reconciliation errors, mapping issues in QBO/Xero.'},
             {t:'Product Development', ap:'Fastest-developing MSP payments company. Launching Accounts Payable feature.', them:'Users report the product feels stagnant with limited investment in new development.'}
           ],
@@ -692,14 +1208,14 @@
             {label:'Purpose', text:'I work with MSPs in [state] and help them take control of AR by eliminating manual payment collection. How are you collecting payments from your clients today?'}
           ],
           diffs:[
-            {t:'Customer Portal', ap:'Full white-labelled portal — SSO/passwordless, invoice history, autopay, team user management', them:'No portal — just a checkout link. Clients must re-enter payment info every time. No invoice history.'},
-            {t:'PSA Integration', ap:'Pulls PSA invoice PDFs into checkout + reconciles accounting simultaneously', them:'No PSA integration — QBO is the only source of truth, not the PSA.'},
-            {t:'Fees', ap:'Free ACH. CC fees (2.9%+$0.30 Visa/MC, 3.5%+$0.30 Amex) billed to end-client by default', them:'1% per ACH (max $10) + 2.9%+$0.30 per CC — all charged to the MSP'},
-            {t:'Autopay', ap:'Autopay by PSA agreement type — handles variable monthly managed service amounts', them:'No PSA-linked autopay. No automated follow-up — MSP manually chases every late payment.'}
+            {t:'Customer Portal', ap:'Full white-labelled portal: SSO/passwordless, invoice history, autopay, team user management', them:'No portal, just a checkout link. Clients must re-enter payment info every time. No invoice history.'},
+            {t:'PSA Integration', ap:'Pulls PSA invoice PDFs into checkout + reconciles accounting simultaneously', them:'No PSA integration. QBO is the only source of truth, not the PSA.'},
+            {t:'Fees', ap:'Free ACH. CC fees (2.9%+$0.30 Visa/MC, 3.5%+$0.30 Amex) billed to end-client by default', them:'1% per ACH (max $10) + 2.9%+$0.30 per CC, all charged to the MSP'},
+            {t:'Autopay', ap:'Autopay by PSA agreement type, handles variable monthly managed service amounts', them:'No PSA-linked autopay. No automated follow-up. MSP manually chases every late payment.'}
           ],
           objections:[
             {o:'"We\'re happy with QuickBooks Payments."', r:'Makes sense at smaller volumes. As you scale: 1% ACH fees + manual invoice management + no portal = real cost. Free ACH + automation + a client portal will meaningfully change your DSO metrics.'},
-            {o:'"We don\'t accept credit cards because of the 2.9% fee."', r:'With AP, the CC fee is billed directly to the end-client by default — you never see it. This lets you offer CC as a payment option without absorbing any of the cost.'}
+            {o:'"We don\'t accept credit cards because of the 2.9% fee."', r:'With AP, the CC fee is billed directly to the end-client by default. You never see it. This lets you offer CC as a payment option without absorbing any of the cost.'}
           ],
           proof:[
             {co:'5K Technical Services', r:'60% of check-payers came online, 10 hrs/month of manual work eliminated (Texas, 2023)', url:'https://www.alternativepayments.io/customer-stories/5k-technical-services/'}
@@ -709,26 +1225,25 @@
           id:'checks', name:'Checks / Direct ACH', short:'Checks', color:'#64748b',
           loom:[],
           talks:[
-            {label:'Intro', text:'I was doing research on your website and noticed you don\'t have a client payment portal. The trend we\'re seeing is MSPs moving away from manual payments toward portals integrated with their PSA and accounting — not just to speed up collections, but to fully automate invoicing, reminders, and reconciliation.'},
+            {label:'Intro', text:'I was doing research on your website and noticed you don\'t have a client payment portal. The trend we\'re seeing is MSPs moving away from manual payments toward portals integrated with their PSA and accounting, not just to speed up collections, but to fully automate invoicing, reminders, and reconciliation.'},
             {label:'Reframe', text:'Walk me through what happens when a client pays by check, right through to when you mark it paid. So they write the check, mail it, you receive it, find the invoice in your accounting software, scan or deposit at the bank? Those 2-3 minutes per invoice add up to hours every month.'}
           ],
           diffs:[
-            {t:'Security', ap:'PCI compliant + SOC 2 Type 2 — all client payment data encrypted', them:'Checks and direct ACH can be compromised — risk of fraud, unsecured transactions, and bank account exposure.'},
-            {t:'Client Experience', ap:'SSO/passwordless portal — clients set up bank info once, autopay handles the rest every month', them:'Prone to human error: wrong amount, lost check, postal delays. No invoice history or self-service.'},
+            {t:'Security', ap:'PCI compliant + SOC 2 Type 2. All client payment data encrypted', them:'Checks and direct ACH can be compromised. Risk of fraud, unsecured transactions, and bank account exposure.'},
+            {t:'Client Experience', ap:'SSO/passwordless portal. Clients set up bank info once, autopay handles the rest every month', them:'Prone to human error: wrong amount, lost check, postal delays. No invoice history or self-service.'},
             {t:'Cash Flow', ap:'Automated reminders + autopay = predictable monthly cash flow with low DSO', them:'Postal delays, forgetfulness, and lost checks all increase DSO and create unpredictable cash flow.'},
             {t:'Labor Cost', ap:'Automated reconciliation saves minimum 2-4 hours/month', them:'Manual reconciliation: find invoice, match amount, scan check, bank deposit = 2-3 mins per invoice × volume'}
           ],
           objections:[
             {o:'"It\'s free to go through my bank."', r:'The transaction may be free, but factor in: hours of manual reconciliation, time chasing late payments, DSO impact on cash flow. AP\'s free ACH + automation translates to real dollar savings at scale.'},
-            {o:'"My clients are old-fashioned and have sent checks for years."', r:'We handle the client communication during onboarding. With SSO/passwordless, their account is auto-created — they just enter bank info once. We can even set up autopay so it runs monthly like their phone bill.'}
+            {o:'"My clients are old-fashioned and have sent checks for years."', r:'We handle the client communication during onboarding. With SSO/passwordless, their account is auto-created. They just enter bank info once. We can even set up autopay so it runs monthly like their phone bill.'}
           ],
           proof:[
             {co:'S1 Technology', r:'90% client adoption, 70% reduction in DSO, fully automated AR (Louisiana, 2023)', url:'https://www.alternativepayments.io/customer-stories/s1-technology/'},
-            {co:'Kalmer Solutions', r:'Needed a trusted payment portal — moved from 100% manual checks (Arkansas, Nov 2024)', url:'#'}
+            {co:'Kalmer Solutions', r:'Needed a trusted payment portal. Moved from 100% manual checks (Arkansas, Nov 2024)', url:'#'}
           ]
         }
       ];
-
       const co = COMPS.find(c=>c.id===activeCo);
       const tabs = [
         {id:'talk', label:'Talk Track'},
@@ -736,7 +1251,6 @@
         {id:'obj', label:'Objections'},
         {id:'proof', label:'Social Proof'}
       ];
-
       return (
         <div className="space-y-5 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
@@ -856,14 +1370,13 @@
         </div>
       );
     }
-
     // ─── Knowledge Base Component ─────────────────────────────────────────────
     function KnowledgeBase() {
       const crashCourseResources = [
         {
           icon:'📖',
           title:'MSP Knowledge Base',
-          desc:'The MSP KB — your primary source for MSP basics. Highly recommended chapters inside.',
+          desc:'The MSP KB: your primary source for MSP basics. Highly recommended chapters inside.',
           url:'https://docs.google.com/document/d/1tJY6GgZ2U2LMeZOH25ZOJzXYgvQ2lWAsJLfyTPKWTOQ/edit?tab=t.0',
           label:'Open MSP KB',
           color:'#1e3a5f',
@@ -871,7 +1384,7 @@
         },
         {
           icon:'🎥',
-          title:'The MSP Market — Video Overview',
+          title:'The MSP Market: Video Overview',
           desc:'A great video breakdown of the MSP market. Watch this early in your onboarding to build context fast.',
           url:'https://www.youtube.com/watch?v=Ezwg1dKn1HM',
           label:'Watch on YouTube',
@@ -897,12 +1410,11 @@
           tag:'Reference Sheet'
         },
       ];
-
       return (
         <div className="space-y-4 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
             <h2 className="text-2xl font-black mb-1" style={{color:'#0a1628'}}>Knowledge Base</h2>
-            <p className="text-slate-500 text-sm leading-relaxed">Live content from the Alternative Payments GitBook — always up to date. Includes sales processes, competitor analysis, playbooks, and more.</p>
+            <p className="text-slate-500 text-sm leading-relaxed">Live content from the Alternative Payments GitBook, always up to date. Includes sales processes, competitor analysis, playbooks, and more.</p>
             <div className="mt-3 flex gap-2">
               <a href="https://internaldocs.alternativepayments.io/sales" target="_blank" rel="noreferrer"
                 className="text-xs font-semibold px-3 py-1.5 rounded-lg"
@@ -911,7 +1423,6 @@
               </a>
             </div>
           </div>
-
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg" style={{backgroundColor:'#0a162820'}}>🎓</div>
@@ -940,11 +1451,10 @@
               ))}
             </div>
           </div>
-
           <div className="rounded-2xl border border-amber-200 p-5" style={{background:'linear-gradient(135deg,#fffbeb,#fff7ed)'}}>
             <h3 className="font-black text-amber-900 text-sm mb-2">📋 Recommended Reading Order for New Reps</h3>
             <ol className="space-y-1">
-              {['Watch the MSP Market video first — get the big picture','Read the MSP KB highlighted chapters — build your vocabulary','Study the PSA Platforms module — know every system cold','Review the Competitor Analysis — know how to position AP','Use the Competitor Spreadsheet during objection handling'].map((step,i)=>(
+              {['Watch the MSP Market video first. Get the big picture','Read the MSP KB highlighted chapters. Build your vocabulary','Study the PSA Platforms module. Know every system cold','Review the Competitor Analysis. Know how to position AP','Use the Competitor Spreadsheet during objection handling'].map((step,i)=>(
                 <li key={i} className="flex gap-2 text-xs text-amber-800">
                   <span className="font-black text-amber-600 flex-shrink-0">{i+1}.</span>
                   {step}
@@ -952,11 +1462,10 @@
               ))}
             </ol>
           </div>
-
           <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center">
             <div className="text-4xl mb-3">📚</div>
             <p className="font-black text-slate-800 text-base mb-1">Alternative Payments GitBook</p>
-            <p className="text-slate-500 text-sm mb-4 leading-relaxed">Sales processes, playbooks, objection handling, and more — always up to date.</p>
+            <p className="text-slate-500 text-sm mb-4 leading-relaxed">Sales processes, playbooks, objection handling, and more, always up to date.</p>
             <a href="https://internaldocs.alternativepayments.io/sales" target="_blank" rel="noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white"
               style={{backgroundColor:'#0891b2',textDecoration:'none'}}>
@@ -966,12 +1475,10 @@
         </div>
       );
     }
-
     // ─── Module Content ───────────────────────────────────────────────────────
     function ModuleContent({ moduleId }) {
       const [expandedPSA, setExpandedPSA] = useState(null);
       const [flowMode, setFlowMode] = useState('traditional');
-
       if (moduleId==='what-is-msp') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
@@ -1021,14 +1528,13 @@
               </div>
               <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
                 <p className="text-amber-800 font-bold text-sm mb-2">💡 Key insight</p>
-                <p className="text-amber-700 text-sm leading-relaxed">At this size, the CEO is directly involved in payment strategy. You are not just talking to an IT person — you are talking to the decision maker.</p>
+                <p className="text-amber-700 text-sm leading-relaxed">At this size, the CEO is directly involved in payment strategy. You are not just talking to an IT person. You are talking to the decision maker.</p>
               </div>
             </div>
           </div>
           <QuizSection questions={QUIZZES['what-is-msp']} moduleId="what-is-msp"/>
         </div>
       );
-
       if (moduleId==='tech-stack') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
@@ -1037,7 +1543,7 @@
           </div>
           <div className="grid md:grid-cols-3 gap-4">
             {[
-              {name:'PSA',full:'Professional Services Automation',color:'#1e3a5f',icon:'🎛️',desc:'The operational brain of an MSP. Manages client contracts, tickets, billing, time tracking, and invoicing. This is where billing lives.',examples:'ConnectWise, HaloPSA, Autotask, SyncroMSP',apNote:'AP integrates HERE'},
+              {name:'PSA',full:'Professional Services Automation',color:'#1e3a5f',icon:'🏛️',desc:'The operational brain of an MSP. Manages client contracts, tickets, billing, time tracking, and invoicing. This is where billing lives.',examples:'ConnectWise, HaloPSA, Autotask, SyncroMSP',apNote:'AP integrates HERE'},
               {name:'RMM',full:'Remote Monitoring and Management',color:'#374151',icon:'📡',desc:'Monitors client computers, servers, and devices remotely. Sends alerts when something breaks. Not billing-related.',examples:'ConnectWise Automate, Kaseya VSA, NinjaRMM',apNote:'AP does NOT integrate here'},
               {name:'Accounting',full:'Accounting Software',color:'#065f46',icon:'📊',desc:'Tracks money flowing in and out. Handles taxes, payroll, and financial statements. Receives invoice data from the PSA.',examples:'QuickBooks Online, QuickBooks Desktop, Xero',apNote:'AP integrates HERE too'},
             ].map(s=>(
@@ -1087,22 +1593,21 @@
           <QuizSection questions={QUIZZES['tech-stack']} moduleId="tech-stack"/>
         </div>
       );
-
       if (moduleId==='psa-platforms') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
             <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>PSA Platforms Explained</h2>
-            <p className="text-slate-600 leading-relaxed">Knowing which PSA an MSP uses tells you who their current payment processor is — and how easy it is for them to switch to AP. Click each platform to learn more.</p>
+            <p className="text-slate-600 leading-relaxed">Knowing which PSA an MSP uses tells you who their current payment processor is, and how easy it is for them to switch to AP. Click each platform to learn more.</p>
           </div>
           <div className="space-y-3">
             {[
-              {name:'ConnectWise',owner:'ConnectWise (independent)',processor:'WisePay (bundled with ConnectWise)',color:'#1e3a5f',notes:'ConnectWise is the largest PSA in the market. WisePay is their payment tool. ConnectWise also requires WiseSync to push data to QuickBooks. AP replaces WisePay and connects directly to both ConnectWise and QuickBooks — no WiseSync needed.'},
-              {name:'Autotask (Kaseya)',owner:'Kaseya (acquired 2022)',processor:'ConnectBooster (also owned by Kaseya)',color:'#b45309',notes:"Autotask was acquired by Datto in 2017, then Kaseya bought Datto in 2022. MSPs who used Autotask for years now find themselves inside the Kaseya ecosystem — which many dislike. ConnectBooster is the default payment tool. Since MSPs distrust Kaseya, they are very open to alternatives."},
-              {name:'HaloPSA',owner:'Halo (independent UK company)',processor:'Alternative Payments (exclusive partner)',color:'#059669',notes:'🌟 STRATEGIC WIN: HaloPSA is growing fast and taking market share from ConnectWise. Their only officially supported MSP payment processor integration is Alternative Payments. Every HaloPSA prospect is a warm lead for us.'},
-              {name:'Kaseya BMS',owner:'Kaseya',processor:'ConnectBooster',color:'#7c3aed',notes:"Kaseya's native PSA — less common than Autotask. Same Kaseya-owned ConnectBooster as default. Same pitch applies: MSPs who use this are likely unhappy with Kaseya and open to switching."},
-              {name:'SyncroMSP',owner:'SyncroMSP (independent)',processor:'WorldPay (built-in) or Stripe',color:'#0284c7',notes:'Syncro is a unified PSA and RMM. Smaller market. Less common than ConnectWise or Autotask. Payment is via WorldPay (built in) or Stripe. Not a priority PSA target, but worth noting when you encounter it.'},
-              {name:'SuperOps',owner:'SuperOps (independent)',processor:'Stripe or FlexPoint',color:'#dc2626',notes:'Modern unified PSA and RMM, AI-focused. Newer entrant to the market. Payment is typically Stripe or FlexPoint. Growing presence in the market — worth tracking.'},
-              {name:'CloudRadial',owner:'CloudRadial (independent)',processor:'ConnectBooster (most likely)',color:'#0891b2',notes:'⚠️ NOT a PSA — CloudRadial is a client management platform that sits on top of a PSA. It provides client-facing portals for MSPs. MSPs using CloudRadial are most likely to also run ConnectBooster for payments. When you see a CloudRadial portal, dig one layer deeper to identify their actual PSA underneath.'},
+              {name:'ConnectWise',owner:'ConnectWise (independent)',processor:'WisePay (bundled with ConnectWise)',color:'#1e3a5f',apIntegration:'✅ AP Integrates (Live)',notes:'ConnectWise is the largest PSA in the market. AP has a live, native ConnectWise integration (on-prem and cloud). It is the most popular PSA integration in our portfolio, battle-tested across hundreds of MSPs. WisePay is their default payment tool, and ConnectWise requires WiseSync to push data to QuickBooks. AP replaces WisePay and connects directly to both ConnectWise and QuickBooks, no WiseSync needed.'},
+              {name:'Autotask (Kaseya)',owner:'Kaseya (acquired 2022)',processor:'ConnectBooster (also owned by Kaseya)',color:'#b45309',apIntegration:'✅ AP Integrates (Live)',notes:"AP has a live, full two-way integration with Autotask (Datto PSA). Invoices sync automatically and payments reconcile back in real time. Autotask was acquired by Datto in 2017, then Kaseya bought Datto in 2022. MSPs who used Autotask for years now find themselves inside the Kaseya ecosystem, which many dislike. ConnectBooster is the default payment tool. Since MSPs distrust Kaseya, they are very open to alternatives."},
+              {name:'HaloPSA',owner:'Halo (independent UK company)',processor:'Alternative Payments (exclusive partner)',color:'#059669',apIntegration:'✅ AP Integrates (Live + Exclusive)',notes:'🌟 STRATEGIC WIN: AP has a live, native HaloPSA integration. HaloPSA is growing fast and taking market share from ConnectWise. Their only officially supported MSP payment processor integration is Alternative Payments. Every HaloPSA prospect is a warm lead for us.'},
+              {name:'SuperOps',owner:'SuperOps (independent)',processor:'Stripe or FlexPoint',color:'#dc2626',apIntegration:'✅ AP Integrates (Live)',notes:'AP has a live, native SuperOps integration. SuperOps is a modern unified PSA and RMM with an AI focus. Newer entrant to the market. Default payment is typically Stripe or FlexPoint, neither of which offer dual integration or a branded client portal. Growing presence in the market and a strong opportunity for AP.'},
+              {name:'Kaseya BMS',owner:'Kaseya',processor:'ConnectBooster',color:'#7c3aed',apIntegration:'❌ No AP Integration',notes:"AP does not currently integrate with Kaseya BMS. This is Kaseya's native PSA, less common than Autotask. Same Kaseya-owned ConnectBooster as default. If you encounter a BMS prospect, the pitch is still valid (they are likely unhappy with Kaseya), but flag to your AE that there is no direct PSA integration today. AP can still integrate with their accounting software (QBO, Xero, etc.)."},
+              {name:'SyncroMSP',owner:'SyncroMSP (independent)',processor:'WorldPay (built-in) or Stripe',color:'#0284c7',apIntegration:'❌ No AP Integration',notes:'AP does not currently integrate with SyncroMSP. Syncro is a unified PSA and RMM with a smaller market share. Payment is via WorldPay (built in) or Stripe. If you encounter a Syncro prospect, AP can still integrate with their accounting software (QBO, Xero, etc.) but there is no direct PSA integration today.'},
+              {name:'CloudRadial',owner:'CloudRadial (independent)',processor:'ConnectBooster (most likely)',color:'#0891b2',apIntegration:'⚠️ Not a PSA',notes:'CloudRadial is NOT a PSA. It is a client management platform that sits on top of a PSA. MSPs using CloudRadial are most likely to also run ConnectBooster for payments. When you see a CloudRadial portal, dig one layer deeper to identify their actual PSA underneath. AP integration depends on whichever PSA they are running under CloudRadial (ConnectWise, Autotask, Halo, or SuperOps = yes).'},
             ].map(p=>(
               <PSACard key={p.name} {...p} isExpanded={expandedPSA===p.name} onClick={()=>setExpandedPSA(expandedPSA===p.name?null:p.name)}/>
             ))}
@@ -1113,13 +1618,12 @@
             <p className="text-amber-800 text-sm leading-relaxed mb-3">This is our <strong>biggest competitive tailwind</strong>. MSPs are actively looking for alternatives to anything Kaseya owns. When you cold call an Autotask or ConnectBooster customer, you are walking into a receptive audience.</p>
             <div className="bg-white rounded-xl p-4 border border-amber-200">
               <p className="text-amber-900 font-bold text-sm">Cold call line to use:</p>
-              <p className="text-amber-700 text-sm italic mt-1">"I know you're on ConnectBooster — a lot of MSPs we talk to are looking to move away from anything Kaseya touches. Would it be worth 15 minutes to see what we're doing differently?"</p>
+              <p className="text-amber-700 text-sm italic mt-1">"I know you're on ConnectBooster. A lot of MSPs we talk to are looking to move away from anything Kaseya touches. Would it be worth 15 minutes to see what we're doing differently?"</p>
             </div>
           </div>
           <QuizSection questions={QUIZZES['psa-platforms']} moduleId="psa-platforms"/>
         </div>
       );
-
       if (moduleId==='money-flow') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
@@ -1156,7 +1660,7 @@
                 {[
                   {icon:'⚡',title:'Autopay on file',body:'Clients set up autopay once. Every invoice is collected automatically each month.'},
                   {icon:'🔁',title:'Dual sync',body:'Payment updates both PSA and accounting software in real time. No manual entry.'},
-                  {icon:'📊',title:'AR Dashboard',body:'See what is paid, what is outstanding, and what is overdue — all in one place.'},
+                  {icon:'📊',title:'AR Dashboard',body:'See what is paid, what is outstanding, and what is overdue, all in one place.'},
                   {icon:'💳',title:'All payment methods',body:'ACH (free for MSP), credit card with surcharging, and check scanning. MSPs have options.'},
                 ].map(c=>(
                   <div key={c.title} className="flex gap-3">
@@ -1170,7 +1674,7 @@
           <QuizSection questions={QUIZZES['money-flow']} moduleId="money-flow"/>
         </div>
       );
-
+      if (moduleId==='invoicing-flow') return <InvoicingFlowModule/>;
       if (moduleId==='ap-fit') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
@@ -1192,7 +1696,7 @@
             </div>
             <div className="bg-white rounded-2xl border-2 border-orange-200 p-5">
               <h3 className="font-black text-orange-800 mb-4">⚠️ Alternative Workflow (Smaller MSPs)</h3>
-              <p className="text-slate-600 text-sm leading-relaxed mb-4">For MSPs without a PSA, invoices are created directly in the accounting software (QuickBooks, Xero). AP still integrates here — the invoice goes out with an AP payment link, and the accounting system updates when payment is made.</p>
+              <p className="text-slate-600 text-sm leading-relaxed mb-4">For MSPs without a PSA, invoices are created directly in the accounting software (QuickBooks, Xero). AP still integrates here. The invoice goes out with an AP payment link, and the accounting system updates when payment is made.</p>
               <div className="space-y-2 text-sm">
                 {['Invoice created directly in QuickBooks or Xero','AP sends payment link via email','Client pays via AP portal','Accounting software updates automatically'].map((step,i)=>(
                   <div key={i} className="flex gap-3 items-start">
@@ -1227,19 +1731,18 @@
           </div>
         </div>
       );
-
       if (moduleId==='msp-culture') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
             <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>MSP Culture and How to Sell to It</h2>
-            <p className="text-slate-600 leading-relaxed">MSPs have a distinct culture. Understanding it makes you far more effective on cold calls and in demos. These are the things no script can tell you — but they matter a lot.</p>
+            <p className="text-slate-600 leading-relaxed">MSPs have a distinct culture. Understanding it makes you far more effective on cold calls and in demos. These are the things no script can tell you, but they matter a lot.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             {[
-              {icon:'🤝',title:'Peer Groups Rule Everything',body:"MSPs trust other MSPs more than any vendor. Communities like Tech Tribe, Lyra, and Evergreen drive purchasing decisions. If one MSP loves AP, their whole peer group will hear about it. Name-dropping other MSPs in the same city is a powerful opener.",tip:'"We just started working with [MSP name] in [their city] — they were having the same ConnectBooster frustrations you might be."'},
-              {icon:'🎯',title:'They Are Brutally Direct',body:"MSPs hate fluff. They are technical people who have heard every vendor pitch. Get to the point in 15 seconds or less. Lead with the pain, not the product.",tip:'"I know you\'re probably slammed — I\'ll be quick. We help MSPs get rid of manual invoice reconciliation. Worth 15 minutes?"'},
-              {icon:'🔧',title:'They Will Go Technical Fast',body:"MSPs may ask about API docs, integration architecture, security certs, or reconciliation logic on the very first call. This is not a barrier — it is a signal of genuine interest.",tip:'"That\'s a great question — I want to make sure you get the right technical details, so I\'d love to loop in our AE for 20 minutes."'},
-              {icon:'🐕',title:'They Love the Underdog',body:"Every major tool MSPs relied on — Autotask, ConnectBooster, Datto — got acquired by large companies and got worse. MSPs are rooting for small, independent, MSP-first companies.",tip:'"We were built by people who came from the MSP world. We\'re not a horizontal payment company — we built this specifically for MSPs, and we\'re not going anywhere."'},
+              {icon:'🤝',title:'Peer Groups Rule Everything',body:"MSPs trust other MSPs more than any vendor. Communities like Tech Tribe, Lyra, and Evergreen drive purchasing decisions. If one MSP loves AP, their whole peer group will hear about it. Name-dropping other MSPs in the same city is a powerful opener.",tip:'"We just started working with [MSP name] in [their city]. They were having the same ConnectBooster frustrations you might be."'},
+              {icon:'🎯',title:'They Are Brutally Direct',body:"MSPs hate fluff. They are technical people who have heard every vendor pitch. Get to the point in 15 seconds or less. Lead with the pain, not the product.",tip:'"I know you\'re probably slammed. I\'ll be quick. We help MSPs get rid of manual invoice reconciliation. Worth 15 minutes?"'},
+              {icon:'🔧',title:'They Will Go Technical Fast',body:"MSPs may ask about API docs, integration architecture, security certs, or reconciliation logic on the very first call. This is not a barrier. It is a signal of genuine interest.",tip:'"That\'s a great question. I want to make sure you get the right technical details, so I\'d love to loop in our AE for 20 minutes."'},
+              {icon:'🐕',title:'They Love the Underdog',body:"Every major tool MSPs relied on (Autotask, ConnectBooster, Datto) got acquired by large companies and got worse. MSPs are rooting for small, independent, MSP-first companies.",tip:'"We were built by people who came from the MSP world. We\'re not a horizontal payment company. We built this specifically for MSPs, and we\'re not going anywhere."'},
             ].map(c=>(
               <div key={c.title} className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
                 <div className="p-5">
@@ -1270,12 +1773,11 @@
           <QuizSection questions={QUIZZES['msp-culture']} moduleId="msp-culture"/>
         </div>
       );
-
       if (moduleId==='spot-psa') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
             <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>How to Spot a PSA on Their Website</h2>
-            <p className="text-slate-600 leading-relaxed">Before a cold call, you can often figure out which PSA an MSP uses — and therefore which payment processor they are likely running — just by visiting their website.</p>
+            <p className="text-slate-600 leading-relaxed">Before a cold call, you can often figure out which PSA an MSP uses, and therefore which payment processor they are likely running, just by visiting their website.</p>
           </div>
           <div className="rounded-2xl border border-blue-200 p-6" style={{background:'linear-gradient(135deg,#eff6ff,#eef2ff)'}}>
             <h3 className="font-black text-blue-900 text-lg mb-3">The Trick</h3>
@@ -1283,18 +1785,18 @@
           </div>
           <div className="space-y-4">
             {[
-              {psa:'ConnectWise',signals:['URL contains connectwise.com, screensurfer.com, or a custom subdomain','Login page has a dark navy/blue corporate theme','ConnectWise logo visible in portal header','Note: Older versions look more dated/grey — still ConnectWise','Obscure variant: the URL itself is the giveaway even if branding is minimal'],processor:'WisePay',opportunity:'WisePay is limited to ConnectWise only. AP offers ConnectWise integration with accounting sync WisePay cannot provide.',color:'#1e3a5f',
-                portal:{bg:'#0a1628',accent:'#1e3a5f',text:'white',label:'ConnectWise Client Portal',url:'company.connectwise.com/clientportal',field1:'Username',field2:'Password',btnColor:'#2563eb',note:'Multiple visual variants exist — navy/dark is most common, older grey version also in use'}},
-              {psa:'Autotask (Kaseya)',signals:['URL contains autotask.net','Login screen reads "Autotask PSA" or "Client Portal"','Simple, corporate login form','ww1.autotask.net is the typical URL pattern'],processor:'ConnectBooster',opportunity:"Kaseya-owned. Best prospect for switching. Lead with the Kaseya angle — they're looking to leave.",color:'#b45309',
-                portal:{bg:'#1f2937',accent:'#374151',text:'white',label:'Autotask Client Portal',url:'ww1.autotask.net/clientportal/login.aspx',field1:'Username',field2:'Password',btnColor:'#b45309',note:'Straightforward corporate login — Kaseya branding minimal on this legacy product'}},
-              {psa:'HaloPSA',signals:['URL contains haloservicedesk.com or custom subdomain','Clean, modern portal with white/light UI','Halo branding or logo visible','Often shows "Support Portal" or company name prominently'],processor:'Alternative Payments (exclusive partner)',opportunity:'🌟 Every HaloPSA prospect is a warm AP lead — we are their ONLY officially supported payment integration.',color:'#059669',
-                portal:{bg:'white',accent:'#059669',text:'#1f2937',label:'Support Portal',url:'portal.haloservicedesk.com',field1:'Email Address',field2:'Password',btnColor:'#059669',note:'Modern clean design — stands out immediately from ConnectWise/Autotask portals'}},
-              {psa:'Kaseya BMS',signals:['URL contains bms.kaseya.com','Kaseya branded login page','Gateway URL pattern: bms.kaseya.com/gateway.aspx','Less common than Autotask but same Kaseya ecosystem'],processor:'ConnectBooster',opportunity:"Same Kaseya playbook applies. MSPs on Kaseya BMS are often unhappy and open to alternatives for everything Kaseya-owned.",color:'#7c3aed',
-                portal:{bg:'#1a0533',accent:'#7c3aed',text:'white',label:'Kaseya BMS Client Portal',url:'bms.kaseya.com/gateway.aspx',field1:'Username',field2:'Password',btnColor:'#7c3aed',note:'Kaseya-branded; less common than Autotask but same objections apply'}},
-              {psa:'SyncroMSP',signals:['URL contains syncromsp.com','Minimal, modern portal','Often branded with MSP name but Syncro-powered','WorldPay payment integration built in'],processor:'WorldPay or Stripe',opportunity:'Smaller market but generic payment tools mean no PSA reconciliation — a gap AP fills.',color:'#0284c7',
+              {psa:'ConnectWise',signals:['URL contains connectwise.com, screensurfer.com, or a custom subdomain','Login page has a dark navy/blue corporate theme','ConnectWise logo visible in portal header','Note: Older versions look more dated/grey, still ConnectWise'],processor:'WisePay',apStatus:'✅ AP Integrates',opportunity:'WisePay is limited to ConnectWise only. AP offers ConnectWise integration with accounting sync WisePay cannot provide.',color:'#1e3a5f',
+                portal:{bg:'#0a1628',accent:'#1e3a5f',text:'white',label:'ConnectWise Client Portal',url:'company.connectwise.com/clientportal',field1:'Username',field2:'Password',btnColor:'#2563eb',note:'Multiple visual variants exist. Navy/dark is most common'}},
+              {psa:'Autotask (Kaseya)',signals:['URL contains autotask.net','Login screen reads "Autotask PSA" or "Client Portal"','Simple, corporate login form','ww1.autotask.net is the typical URL pattern'],processor:'ConnectBooster',apStatus:'✅ AP Integrates',opportunity:"Kaseya-owned. Best prospect for switching. Lead with the Kaseya angle. They're looking to leave.",color:'#b45309',
+                portal:{bg:'#1f2937',accent:'#374151',text:'white',label:'Autotask Client Portal',url:'ww1.autotask.net/clientportal/login.aspx',field1:'Username',field2:'Password',btnColor:'#b45309',note:'Straightforward corporate login. Kaseya branding minimal'}},
+              {psa:'HaloPSA',signals:['URL contains haloservicedesk.com or custom subdomain','Clean, modern portal with white/light UI','Halo branding or logo visible','Often shows "Support Portal" or company name prominently'],processor:'Alternative Payments (exclusive partner)',apStatus:'✅ AP Integrates (Exclusive)',opportunity:'🌟 Every HaloPSA prospect is a warm AP lead. We are their ONLY officially supported payment integration.',color:'#059669',
+                portal:{bg:'white',accent:'#059669',text:'#1f2937',label:'Support Portal',url:'portal.haloservicedesk.com',field1:'Email Address',field2:'Password',btnColor:'#059669',note:'Modern clean design. Stands out from ConnectWise/Autotask portals'}},
+              {psa:'Kaseya BMS',signals:['URL contains bms.kaseya.com','Kaseya branded login page','Gateway URL pattern: bms.kaseya.com/gateway.aspx','Less common than Autotask but same Kaseya ecosystem'],processor:'ConnectBooster',apStatus:'❌ No AP Integration',opportunity:"No direct PSA integration, but AP can still connect to their accounting software. Same Kaseya playbook applies for pitch.",color:'#7c3aed',
+                portal:{bg:'#1a0533',accent:'#7c3aed',text:'white',label:'Kaseya BMS Client Portal',url:'bms.kaseya.com/gateway.aspx',field1:'Username',field2:'Password',btnColor:'#7c3aed',note:'Kaseya-branded; less common than Autotask'}},
+              {psa:'SyncroMSP',signals:['URL contains syncromsp.com','Minimal, modern portal','Often branded with MSP name but Syncro-powered','WorldPay payment integration built in'],processor:'WorldPay or Stripe',apStatus:'❌ No AP Integration',opportunity:'No direct PSA integration, but AP can connect to their accounting software (QBO, Xero, etc.).',color:'#0284c7',
                 portal:{bg:'#f8fafc',accent:'#0284c7',text:'#1f2937',label:'Client Portal',url:'app.syncromsp.com/portal',field1:'Email',field2:'Password',btnColor:'#0284c7',note:'Clean minimal design, often co-branded with MSP name'}},
-              {psa:'CloudRadial',signals:['URL contains cloudradial.com or custom subdomain','Modern tile/dashboard-style portal (not a simple login form)','Branded with MSP colors and logo','Note: This is a CLIENT MANAGEMENT PLATFORM — not a PSA'],processor:'ConnectBooster (most likely)',opportunity:"CloudRadial sits on top of a real PSA. Dig deeper to find the underlying PSA. Most CloudRadial users also have ConnectBooster — making them prime AP targets.",color:'#0891b2',
-                portal:{bg:'#0891b2',accent:'#0e7490',text:'white',label:'Client Portal',url:'company.cloudradial.com',field1:'Email Address',field2:'Password',btnColor:'#164e63',note:'⚠️ Not a PSA — a client management layer. Find their real PSA by asking or researching further.'}},
+              {psa:'CloudRadial',signals:['URL contains cloudradial.com or custom subdomain','Modern tile/dashboard-style portal (not a simple login form)','Branded with MSP colors and logo','Note: This is a CLIENT MANAGEMENT PLATFORM, not a PSA'],processor:'ConnectBooster (most likely)',apStatus:'⚠️ Not a PSA',opportunity:"CloudRadial sits on top of a real PSA. Dig deeper to find the underlying PSA. AP integration depends on the PSA underneath.",color:'#0891b2',
+                portal:{bg:'#0891b2',accent:'#0e7490',text:'white',label:'Client Portal',url:'company.cloudradial.com',field1:'Email Address',field2:'Password',btnColor:'#164e63',note:'⚠️ Not a PSA. A client management layer.'}},
             ].map(p=>(
               <div key={p.psa} className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
                 <div className="flex items-center gap-4 p-4 border-b border-slate-100" style={{backgroundColor:p.color+'15'}}>
@@ -1303,6 +1805,7 @@
                     <p className="font-black text-slate-800">{p.psa}</p>
                     <p className="text-xs text-slate-500">Default payment tool: <strong>{p.processor}</strong></p>
                   </div>
+                  {p.apStatus && <span className={`text-xs font-bold px-2 py-1 rounded-lg flex-shrink-0 ${p.apStatus.startsWith('✅')?'bg-green-100 text-green-800':p.apStatus.startsWith('❌')?'bg-red-100 text-red-800':'bg-amber-100 text-amber-800'}`}>{p.apStatus}</span>}
                 </div>
                 <div className="p-4 grid md:grid-cols-3 gap-4">
                   <div>
@@ -1340,25 +1843,23 @@
           <QuizSection questions={QUIZZES['spot-psa']} moduleId="spot-psa"/>
         </div>
       );
-
       if (moduleId==='competitive') return <CompetitivePlaybook/>;
       if (moduleId==='knowledge-base') return <KnowledgeBase/>;
       return null;
     }
-
     // ─── Module Definitions ───────────────────────────────────────────────────
     const MODULES = [
       {id:'what-is-msp',icon:'🏢',title:'What Is an MSP?',desc:'The basics of Managed Service Providers',time:'8 min',color:'#1e3a5f'},
       {id:'tech-stack',icon:'🔧',title:'The MSP Tech Stack',desc:'PSA, RMM, and accounting software explained',time:'10 min',color:'#374151'},
-      {id:'psa-platforms',icon:'🎛️',title:'PSA Platforms',desc:'ConnectWise, Autotask, HaloPSA, and more',time:'10 min',color:'#b45309'},
+      {id:'psa-platforms',icon:'🏛️',title:'PSA Platforms',desc:'ConnectWise, Autotask, HaloPSA, and more',time:'10 min',color:'#b45309'},
       {id:'money-flow',icon:'💰',title:'How MSPs Get Paid',desc:'The invoice flow from billing to collection',time:'8 min',color:'#065f46'},
+      {id:'invoicing-flow',icon:'🧾',title:'The Invoicing Flow',desc:'From ticket creation to payment capture',time:'8 min',color:'#0d9488'},
       {id:'ap-fit',icon:'⚡',title:'Where AP Fits',desc:'Dual integration and the AP advantage',time:'10 min',color:'#2563eb'},
       {id:'msp-culture',icon:'🤝',title:'MSP Culture',desc:'How to sell to MSPs effectively',time:'7 min',color:'#7c3aed'},
       {id:'spot-psa',icon:'🔍',title:'Spot a PSA',desc:'Identify PSA types from MSP websites',time:'6 min',color:'#0284c7'},
       {id:'competitive',icon:'⚔️',title:'Competitive Playbook',desc:'Talk tracks & objections for every competitor',time:'Reference',color:'#dc2626'},
-      {id:'knowledge-base',icon:'📚',title:'Knowledge Base',desc:'Live GitBook — sales processes, playbooks & more',time:'Live',color:'#0891b2'},
+      {id:'knowledge-base',icon:'📚',title:'Knowledge Base',desc:'Live GitBook: sales processes, playbooks & more',time:'Live',color:'#0891b2'},
     ];
-
     // ─── Home Screen ──────────────────────────────────────────────────────────
     function HomeScreen({ onSelect }) {
       return (
@@ -1370,7 +1871,7 @@
             <h1 className="text-3xl font-black leading-tight mb-3">MSP Landscape<br/>Onboarding Guide</h1>
             <p className="text-blue-100 leading-relaxed max-w-lg">Everything you need to understand the MSP market, speak the language, and sell with confidence. Work through each module at your own pace.</p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>9 Modules</div>
+              <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>10 Modules</div>
               <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>Interactive visuals</div>
               <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>Quizzes included</div>
             </div>
@@ -1393,13 +1894,11 @@
         </div>
       );
     }
-
     // ─── Main App ─────────────────────────────────────────────────────────────
     function App() {
       const [active, setActive] = useState('home');
       const [sidebarOpen, setSidebarOpen] = useState(false);
       const current = MODULES.find(m=>m.id===active);
-
       return (
         <div className="min-h-screen flex flex-col" style={{backgroundColor:'#f0f4f8'}}>
           <nav className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
@@ -1422,7 +1921,6 @@
               <button onClick={()=>setActive('home')} className={`text-sm font-semibold px-4 py-1.5 rounded-xl transition-all ${active==='home'?'text-blue-600':'text-slate-500 hover:text-slate-800'}`}>All Modules</button>
             </div>
           </nav>
-
           <div className="flex flex-1 max-w-7xl mx-auto w-full">
             <aside className={`${sidebarOpen?'block':'hidden'} md:block w-64 flex-shrink-0 border-r border-slate-200 bg-white`}
               style={{position:'sticky',top:'56px',height:'calc(100vh - 56px)',overflowY:'auto'}}>
@@ -1441,7 +1939,6 @@
                 ))}
               </div>
             </aside>
-
             <main className="flex-1 p-4 md:p-6 overflow-x-hidden">
               {active==='home'
                 ? <HomeScreen onSelect={(id)=>setActive(id)}/>
@@ -1452,13 +1949,7 @@
         </div>
       );
     }
-
     ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
   </script>
 </body>
 </html>
-
-
-<system-reminder>
-Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
-</system-reminder>
