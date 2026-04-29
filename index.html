@@ -8,38 +8,51 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            ap: { navy: '#0a1628', blue: '#2563eb', light: '#60a5fa', slate: '#1e3a5f' }
+            ap: { navy: '#2B2D42', blue: '#2B2D6B', light: '#7C5CFC', slate: '#3D3F56', gold: '#C5A338' }
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
           }
         }
       }
     }
   </script>
   <style>
-    :root { --ap-navy:#0a1628; --ap-blue:#2563eb; --ap-light:#60a5fa; --ap-slate:#1e3a5f; }
+    :root {
+      --ap-navy:#2B2D42; --ap-blue:#2B2D6B; --ap-light:#7C5CFC; --ap-slate:#3D3F56;
+      --ap-brand-gold:#C5A338; --ap-surface:#F8FAFC; --ap-surface-100:#F1F5F9;
+      --ap-border:#E2E8F0; --ap-text-body:#334155; --ap-text-muted:#94A3B8;
+      --ap-shadow-flat: 0px 1px 2px 0px rgba(36, 104, 147, 0.04);
+      --ap-shadow-overlay: 0px 4px 4px -1px rgba(36, 104, 147, 0.04);
+      --ap-shadow-sticky: 0px 4px 8px 0px rgba(36, 104, 147, 0.04);
+    }
     * { box-sizing: border-box; }
-    body { background-color:#f0f4f8; color:#1a202c; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; margin:0; }
-    .module-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .module-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+    body { background-color:#F8FAFC; color:#334155; font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; margin:0; }
+    .module-card { transition: transform 0.2s ease, box-shadow 0.2s ease; border-radius: 12px; }
+    .module-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(36,104,147,0.08); }
     .quiz-option { transition: all 0.15s ease; cursor: pointer; }
-    .quiz-option:hover { border-color:#2563eb!important; background-color:#eff6ff!important; }
-    .quiz-correct { border-color:#16a34a!important; background-color:#f0fdf4!important; }
-    .quiz-wrong { border-color:#dc2626!important; background-color:#fef2f2!important; }
-    .quiz-reveal { border-color:#16a34a!important; background-color:#dcfce7!important; }
+    .quiz-option:hover { border-color:#2B2D6B!important; background-color:#F3EEFF!important; }
+    .quiz-correct { border-color:#10B981!important; background-color:#ECFDF5!important; }
+    .quiz-wrong { border-color:#EF4444!important; background-color:#FEF2F2!important; }
+    .quiz-reveal { border-color:#10B981!important; background-color:#D1FAE5!important; }
     @keyframes slideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
     .slide-in { animation: slideIn 0.3s ease forwards; }
     .progress-bar { transition: width 0.4s ease; }
-    .nav-item-active { background: linear-gradient(135deg,#1e3a5f,#2563eb); color: white; }
-    .gradient-header { background: linear-gradient(135deg,#0a1628 0%,#1e3a5f 50%,#2563eb 100%); }
+    .nav-item-active { background: linear-gradient(135deg,#2B2D6B,#3D3F56); color: white; }
+    .gradient-header { background: linear-gradient(135deg,#2B2D42 0%,#2B2D6B 60%,#7C5CFC 100%); }
     .ecosystem-node { transition: all 0.2s ease; }
-    .ecosystem-node:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(37,99,235,0.3); }
+    .ecosystem-node:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(43,45,107,0.25); }
     .flow-node { transition: all 0.25s ease; }
-    .flow-node:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
-    .flow-node-active { ring: 2px solid #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.3); }
+    .flow-node:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(36,104,147,0.12); }
+    .flow-node-active { ring: 2px solid #2B2D6B; box-shadow: 0 0 0 3px rgba(43,45,107,0.25); }
     .integration-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
   </style>
 </head>
@@ -269,8 +282,8 @@
     function EcosystemDiagram() {
       const [active, setActive] = useState(null);
       const nodeInfo = {
-        psa:        { label:'PSA',         sub:'ConnectWise · Halo · Autotask',  color:'#1e3a5f', integrated:true,  desc:'The operational brain. Manages tickets, service agreements, invoices, and time tracking. This is where billing lives.' },
-        ap:         { label:'AP Platform', sub:'Alternative Payments',           color:'#2563eb', integrated:true,  desc:'The missing link. AP connects to BOTH the PSA and accounting software simultaneously. When a client pays, both systems update in real time, zero manual work.' },
+        psa:        { label:'PSA',         sub:'ConnectWise · Halo · Autotask',  color:'#3D3F56', integrated:true,  desc:'The operational brain. Manages tickets, service agreements, invoices, and time tracking. This is where billing lives.' },
+        ap:         { label:'AP Platform', sub:'Alternative Payments',           color:'#2B2D6B', integrated:true,  desc:'The missing link. AP connects to BOTH the PSA and accounting software simultaneously. When a client pays, both systems update in real time, zero manual work.' },
         accounting: { label:'Accounting',  sub:'QuickBooks · Xero',              color:'#059669', integrated:true,  desc:'Tracks money in and out. Handles payroll, taxes, and financial statements. Receives real-time payment updates directly from AP.' },
         rmm:        { label:'RMM',         sub:'Remote Monitoring',              color:'#64748b', integrated:false, desc:"Monitors client devices and servers remotely. Not billing-related. AP doesn't integrate here. The RMM sits outside the payment workflow entirely." },
         client:     { label:'MSP Client',  sub:'End Customer',                   color:'#7c3aed', integrated:true,  desc:'The business that pays the MSP. They receive a branded AP invoice with a payment link. One click to pay. AP handles all the reconciliation.' },
@@ -283,23 +296,23 @@
         client:     { x:309, y:318, w:162, h:68 },
       };
       const connections = [
-        { x1:192, y1:204, x2:309, y2:204, color:'#2563eb', dashed:false, label:'invoice sync',    lx:251, ly:194 },
+        { x1:192, y1:204, x2:309, y2:204, color:'#2B2D6B', dashed:false, label:'invoice sync',    lx:251, ly:194 },
         { x1:471, y1:204, x2:588, y2:204, color:'#059669', dashed:false, label:'payment sync',    lx:530, ly:194 },
         { x1:390, y1:110, x2:390, y2:168, color:'#94a3b8', dashed:true,  label:'no integration', lx:445, ly:143 },
         { x1:390, y1:240, x2:390, y2:318, color:'#7c3aed', dashed:false, label:'payment link',   lx:445, ly:282 },
       ];
-      const markerFor = c => c.color==='#2563eb'?'arr-blue':c.color==='#059669'?'arr-green':c.color==='#7c3aed'?'arr-purple':'arr-gray';
+      const markerFor = c => c.color==='#2B2D6B'?'arr-blue':c.color==='#059669'?'arr-green':c.color==='#7c3aed'?'arr-purple':'arr-gray';
       const activeInfo = active ? nodeInfo[active] : null;
       return (
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#0a1628,#1e3a5f,#2563eb)'}}>
+          <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#2B2D42,#3D3F56,#2B2D6B)'}}>
             <h3 className="text-white font-bold text-lg">The MSP Tech Ecosystem</h3>
             <p className="text-blue-200 text-sm mt-1">Click any node to learn more about its role</p>
           </div>
           <div className="p-4">
             <svg viewBox="0 0 780 410" style={{width:'100%',height:'auto',display:'block'}}>
               <defs>
-                {[['arr-blue','#2563eb'],['arr-green','#059669'],['arr-purple','#7c3aed'],['arr-gray','#94a3b8']].map(([id,fill])=>(
+                {[['arr-blue','#2B2D6B'],['arr-green','#059669'],['arr-purple','#7c3aed'],['arr-gray','#94a3b8']].map(([id,fill])=>(
                   <marker key={id} id={id} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                     <path d="M0,0 L10,5 L0,10 z" fill={fill} opacity="0.85"/>
                   </marker>
@@ -337,7 +350,7 @@
                       fontFamily="system-ui,-apple-system,sans-serif">{info.sub}</text>
                     {(id==='psa'||id==='accounting')&&(
                       <text x={midX} y={r.y+r.h+17} textAnchor="middle"
-                        fill="#2563eb" fontSize="9" fontStyle="italic"
+                        fill="#2B2D6B" fontSize="9" fontStyle="italic"
                         fontFamily="system-ui,sans-serif" opacity="0.85">AP integrates here ↑</text>
                     )}
                   </g>
@@ -346,7 +359,7 @@
             </svg>
             <div className="flex flex-wrap gap-5 mt-1 mb-3 px-1">
               <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                <svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="#2563eb" strokeWidth="2"/></svg>
+                <svg width="26" height="8"><line x1="0" y1="4" x2="26" y2="4" stroke="#2B2D6B" strokeWidth="2"/></svg>
                 Integrated
               </div>
               <div className="flex items-center gap-1.5 text-xs text-slate-500">
@@ -374,15 +387,15 @@
     // ─── Invoice Flow ─────────────────────────────────────────────────────────
     function InvoiceFlow({ mode }) {
       const traditional = [
-        { icon:'📄', label:'Create invoice', sub:'in PSA', color:'#1e3a5f' },
+        { icon:'📄', label:'Create invoice', sub:'in PSA', color:'#3D3F56' },
         { icon:'📧', label:'Manually email', sub:'PDF invoice', color:'#374151' },
         { icon:'⏳', label:'Wait and chase', sub:'late payments', color:'#dc2626' },
         { icon:'🖩', label:'Manually sync', sub:'to accounting', color:'#d97706' },
         { icon:'🔍', label:'Reconcile', sub:'errors manually', color:'#7c3aed' },
       ];
       const withAP = [
-        { icon:'📄', label:'Create invoice', sub:'in PSA', color:'#1e3a5f' },
-        { icon:'🔗', label:'AP link in email', sub:'sent automatically', color:'#2563eb' },
+        { icon:'📄', label:'Create invoice', sub:'in PSA', color:'#3D3F56' },
+        { icon:'🔗', label:'AP link in email', sub:'sent automatically', color:'#2B2D6B' },
         { icon:'💳', label:'Client pays online', sub:'card, ACH, any method', color:'#059669' },
         { icon:'⚡', label:'PSA updates', sub:'automatically', color:'#059669' },
         { icon:'✅', label:'QuickBooks synced', sub:'zero manual work', color:'#059669' },
@@ -472,7 +485,7 @@
             <div className="text-5xl mb-3">{pct===100?'🏆':pct>=67?'🎯':'📚'}</div>
             <p className="text-2xl font-black text-slate-800">{score} / {questions.length} correct</p>
             <p className="text-slate-500 mt-1">{pct===100?'Perfect score! You nailed it.':pct>=67?'Nice work! Review any missed questions.':'Keep reviewing this module and try again.'}</p>
-            <button onClick={restart} className="mt-4 px-6 py-2 rounded-xl text-white font-bold text-sm" style={{backgroundColor:'#2563eb'}}>Try Again</button>
+            <button onClick={restart} className="mt-4 px-6 py-2 rounded-xl text-white font-bold text-sm" style={{backgroundColor:'#2B2D6B'}}>Try Again</button>
           </div>
         );
       }
@@ -505,7 +518,7 @@
               <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200 slide-in">
                 <p className="text-sm font-semibold text-blue-800 mb-1">{selected===q.correct?'✅ Correct!':'❌ Not quite.'}</p>
                 <p className="text-sm text-blue-700">{q.explanation}</p>
-                <button onClick={next} className="mt-3 px-5 py-2 rounded-xl text-white font-bold text-sm" style={{backgroundColor:'#2563eb'}}>
+                <button onClick={next} className="mt-3 px-5 py-2 rounded-xl text-white font-bold text-sm" style={{backgroundColor:'#2B2D6B'}}>
                   {current+1<questions.length?'Next Question →':'See Results'}
                 </button>
               </div>
@@ -527,22 +540,22 @@
       const cur = steps[step];
       return (
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#0a1628,#1e3a5f,#2563eb)'}}>
+          <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#2B2D42,#3D3F56,#2B2D6B)'}}>
             <h3 className="text-white font-bold text-lg">How AP Fits: Dual Integration</h3>
             <p className="text-blue-200 text-sm">Step through the payment flow</p>
           </div>
           <div className="p-6">
             <div className="relative h-64 mb-6">
               <svg className="absolute inset-0 w-full h-full" viewBox="0 0 600 260" preserveAspectRatio="xMidYMid meet">
-                <line x1="155" y1="90" x2="245" y2="90" stroke={cur.active.includes('psa')&&cur.active.includes('ap')?'#2563eb':'#cbd5e1'} strokeWidth="2.5" strokeDasharray={cur.active.includes('psa')&&cur.active.includes('ap')?'8,3':undefined}/>
+                <line x1="155" y1="90" x2="245" y2="90" stroke={cur.active.includes('psa')&&cur.active.includes('ap')?'#2B2D6B':'#cbd5e1'} strokeWidth="2.5" strokeDasharray={cur.active.includes('psa')&&cur.active.includes('ap')?'8,3':undefined}/>
                 <line x1="355" y1="90" x2="445" y2="90" stroke={cur.active.includes('ap')&&cur.active.includes('qb')?'#059669':'#cbd5e1'} strokeWidth="2.5" strokeDasharray={cur.active.includes('ap')&&cur.active.includes('qb')?'8,3':undefined}/>
                 <line x1="300" y1="140" x2="300" y2="180" stroke={cur.active.includes('ap')&&cur.active.includes('client')?'#7c3aed':'#cbd5e1'} strokeWidth="2.5" strokeDasharray={cur.active.includes('ap')&&cur.active.includes('client')?'8,3':undefined}/>
               </svg>
-              <div className={`absolute top-8 left-0 w-36 rounded-2xl p-3 text-center transition-all duration-300 ${cur.active.includes('psa')?'ring-2 ring-blue-400 shadow-lg':'opacity-50'}`} style={{backgroundColor:'#1e3a5f'}}>
+              <div className={`absolute top-8 left-0 w-36 rounded-2xl p-3 text-center transition-all duration-300 ${cur.active.includes('psa')?'ring-2 ring-blue-400 shadow-lg':'opacity-50'}`} style={{backgroundColor:'#3D3F56'}}>
                 <p className="text-white font-black text-sm">PSA</p>
                 <p className="text-blue-200 text-xs mt-0.5">Invoices live here</p>
               </div>
-              <div className={`absolute top-8 rounded-2xl p-3 text-center transition-all duration-300 ${cur.active.includes('ap')?'ring-2 ring-blue-400 shadow-xl':'opacity-50'}`} style={{backgroundColor:'#2563eb',left:'50%',transform:'translateX(-50%)'}}>
+              <div className={`absolute top-8 rounded-2xl p-3 text-center transition-all duration-300 ${cur.active.includes('ap')?'ring-2 ring-blue-400 shadow-xl':'opacity-50'}`} style={{backgroundColor:'#2B2D6B',left:'50%',transform:'translateX(-50%)'}}>
                 <p className="text-white font-black text-sm">AP Platform</p>
                 <p className="text-blue-100 text-xs mt-0.5">The connector</p>
               </div>
@@ -565,7 +578,7 @@
                   <button key={i} onClick={()=>setStep(i)} className={`w-2.5 h-2.5 rounded-full transition-all ${i===step?'bg-blue-600 scale-125':'bg-slate-300'}`}/>
                 ))}
               </div>
-              <button onClick={()=>setStep(s=>Math.min(steps.length-1,s+1))} disabled={step===steps.length-1} className="px-4 py-2 rounded-xl text-white text-sm font-bold disabled:opacity-40" style={{backgroundColor:'#2563eb'}}>Next →</button>
+              <button onClick={()=>setStep(s=>Math.min(steps.length-1,s+1))} disabled={step===steps.length-1} className="px-4 py-2 rounded-xl text-white text-sm font-bold disabled:opacity-40" style={{backgroundColor:'#2B2D6B'}}>Next →</button>
             </div>
           </div>
         </div>
@@ -585,7 +598,7 @@
       return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>The Invoicing Flow</h2>
+            <h2 className="text-2xl font-black mb-2" style={{color:'#2B2D42'}}>The Invoicing Flow</h2>
             <p className="text-slate-600 leading-relaxed">From ticket creation to payment capture: the complete MSP revenue flow with quoting and sync tool branches. Understanding this flow is critical for knowing exactly where AP plugs in.</p>
           </div>
           {/* Section tabs */}
@@ -608,7 +621,7 @@
           {activeSection==='overview' && (
             <div className="space-y-5 slide-in">
               <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-                <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#0a1628,#134e4a,#0d9488)'}}>
+                <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#2B2D42,#134e4a,#0d9488)'}}>
                   <h3 className="text-white font-bold text-lg">MSP Revenue Flow</h3>
                   <p className="text-teal-200 text-sm mt-1">Every invoice starts with a ticket. Click each stage to learn more</p>
                 </div>
@@ -616,10 +629,10 @@
                   {/* Visual flow */}
                   <div className="flex flex-wrap items-start justify-center gap-3 mb-6">
                     {[
-                      {id:'ticket', icon:'🎫', label:'Ticket Created', sub:'in PSA', color:'#1e3a5f', desc:'Every invoice begins with a ticket in the PSA. The ticket tracks work done, time spent, and services delivered. This is the origin of all billing.'},
+                      {id:'ticket', icon:'🎫', label:'Ticket Created', sub:'in PSA', color:'#3D3F56', desc:'Every invoice begins with a ticket in the PSA. The ticket tracks work done, time spent, and services delivered. This is the origin of all billing.'},
                       {id:'psa', icon:'🏛️', label:'PSA Creates Invoice', sub:'from ticket data', color:'#0d9488', desc:'The PSA generates an invoice from ticket data: service agreements, time entries, project milestones, or ad-hoc charges. The invoice lives in the PSA first.'},
                       {id:'sync', icon:'🔄', label:'Syncs to Accounting', sub:'or ERP system', color:'#7c3aed', desc:'The invoice syncs from the PSA to the accounting system (QuickBooks, Xero) or ERP (Business Central, Sage Intacct). This sync can happen via AP directly or through sync tools like WiseSync.'},
-                      {id:'ap', icon:'⚡', label:'AP Sends Invoice', sub:'payment link included', color:'#2563eb', desc:'AP sends the client a branded email with a payment link. The client portal shows full invoice history, supports autopay, and accepts ACH, credit card, or check.'},
+                      {id:'ap', icon:'⚡', label:'AP Sends Invoice', sub:'payment link included', color:'#2B2D6B', desc:'AP sends the client a branded email with a payment link. The client portal shows full invoice history, supports autopay, and accepts ACH, credit card, or check.'},
                       {id:'payment', icon:'💰', label:'Client Pays', sub:'via Client Portal', color:'#059669', desc:'The end-client pays online through the Client Portal. Payment data flows back through AP to update both the PSA and accounting system simultaneously, with zero manual reconciliation.'},
                     ].map((node, i)=>(
                       <div key={node.id} className="flex items-center gap-3">
@@ -883,7 +896,7 @@
           {activeSection==='sync-tools' && (
             <div className="space-y-4 slide-in">
               <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-                <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#0a1628,#1e3a5f,#2563eb)'}}>
+                <div className="px-6 py-4" style={{background:'linear-gradient(135deg,#2B2D42,#3D3F56,#2B2D6B)'}}>
                   <h3 className="text-white font-bold text-lg">Sync Tools: Branches off ConnectWise</h3>
                   <p className="text-blue-200 text-sm mt-1">When AP can replace them and when the MSP should keep them</p>
                 </div>
@@ -974,7 +987,7 @@
                     term:'Partner',
                     meaning:'The MSP',
                     icon:'🤝',
-                    color:'#1e3a5f',
+                    color:'#3D3F56',
                     example:'"We currently work with over 600 partners across the US."',
                     wrong:'Don\'t say "customer" or "user" when referring to the MSP.'
                   },
@@ -990,7 +1003,7 @@
                     term:'Admin / Partner Dashboard',
                     meaning:'MSP\'s view of the AP platform',
                     icon:'📊',
-                    color:'#2563eb',
+                    color:'#2B2D6B',
                     example:'"From your Admin Dashboard, you can see every outstanding invoice and payment status."',
                     wrong:'Don\'t call it "the backend" or "admin panel." It\'s the Partner Dashboard.'
                   },
@@ -1254,7 +1267,7 @@
       return (
         <div className="space-y-5 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h2 className="text-2xl font-black mb-1" style={{color:'#0a1628'}}>Competitive Playbook</h2>
+            <h2 className="text-2xl font-black mb-1" style={{color:'#2B2D42'}}>Competitive Playbook</h2>
             <p className="text-slate-500 text-sm">Talk tracks, product differences, objections, and social proof for every competitor.</p>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200 p-4">
@@ -1292,7 +1305,7 @@
                 {co.loom && co.loom.length > 0 && co.loom.map((l,i)=>(
                   <a key={i} href={l.url} target="_blank" rel="noreferrer"
                     className="text-xs font-semibold px-3 py-1 rounded-lg ml-auto"
-                    style={{backgroundColor:'#f1f5f9',color:'#2563eb'}}>
+                    style={{backgroundColor:'#f1f5f9',color:'#2B2D6B'}}>
                     {'🎥 ' + l.label}
                   </a>
                 ))}
@@ -1379,7 +1392,7 @@
           desc:'The MSP KB: your primary source for MSP basics. Highly recommended chapters inside.',
           url:'https://docs.google.com/document/d/1tJY6GgZ2U2LMeZOH25ZOJzXYgvQ2lWAsJLfyTPKWTOQ/edit?tab=t.0',
           label:'Open MSP KB',
-          color:'#1e3a5f',
+          color:'#3D3F56',
           tag:'Foundational Reading'
         },
         {
@@ -1413,19 +1426,19 @@
       return (
         <div className="space-y-4 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h2 className="text-2xl font-black mb-1" style={{color:'#0a1628'}}>Knowledge Base</h2>
+            <h2 className="text-2xl font-black mb-1" style={{color:'#2B2D42'}}>Knowledge Base</h2>
             <p className="text-slate-500 text-sm leading-relaxed">Live content from the Alternative Payments GitBook, always up to date. Includes sales processes, competitor analysis, playbooks, and more.</p>
             <div className="mt-3 flex gap-2">
               <a href="https://internaldocs.alternativepayments.io/sales" target="_blank" rel="noreferrer"
                 className="text-xs font-semibold px-3 py-1.5 rounded-lg"
-                style={{backgroundColor:'#eff6ff',color:'#2563eb'}}>
+                style={{backgroundColor:'#eff6ff',color:'#2B2D6B'}}>
                 Open in new tab ↗
               </a>
             </div>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg" style={{backgroundColor:'#0a162820'}}>🎓</div>
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg" style={{backgroundColor:'#2B2D4220'}}>🎓</div>
               <div>
                 <h3 className="font-black text-slate-800 text-base">MSP Crash Course Resources</h3>
                 <p className="text-slate-500 text-xs">Core reading and reference material for new reps</p>
@@ -1482,7 +1495,7 @@
       if (moduleId==='what-is-msp') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>What Is an MSP?</h2>
+            <h2 className="text-2xl font-black mb-2" style={{color:'#2B2D42'}}>What Is an MSP?</h2>
             <p className="text-slate-600 text-base leading-relaxed">An MSP (Managed Service Provider) is a company that manages IT for other businesses. Think of them as an outsourced IT department. Instead of a company hiring their own IT staff, they pay an MSP a monthly fee to handle everything.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1506,7 +1519,7 @@
               ))}
             </div>
           </div>
-          <div className="rounded-2xl p-6" style={{background:'linear-gradient(135deg,#2563eb,#1d4ed8)'}}>
+          <div className="rounded-2xl p-6" style={{background:'linear-gradient(135deg,#2B2D6B,#1d4ed8)'}}>
             <h3 className="text-white font-black text-lg mb-4">Market at a Glance</h3>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div><p className="text-3xl font-black text-white">40K</p><p className="text-blue-200 text-sm mt-1">MSPs in the USA</p></div>
@@ -1538,12 +1551,12 @@
       if (moduleId==='tech-stack') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>The MSP Tech Stack</h2>
+            <h2 className="text-2xl font-black mb-2" style={{color:'#2B2D42'}}>The MSP Tech Stack</h2>
             <p className="text-slate-600 leading-relaxed">Every MSP runs on three core systems. Understanding these is critical to knowing where AP fits and why prospects care about our product.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-4">
             {[
-              {name:'PSA',full:'Professional Services Automation',color:'#1e3a5f',icon:'🏛️',desc:'The operational brain of an MSP. Manages client contracts, tickets, billing, time tracking, and invoicing. This is where billing lives.',examples:'ConnectWise, HaloPSA, Autotask, SyncroMSP',apNote:'AP integrates HERE'},
+              {name:'PSA',full:'Professional Services Automation',color:'#3D3F56',icon:'🏛️',desc:'The operational brain of an MSP. Manages client contracts, tickets, billing, time tracking, and invoicing. This is where billing lives.',examples:'ConnectWise, HaloPSA, Autotask, SyncroMSP',apNote:'AP integrates HERE'},
               {name:'RMM',full:'Remote Monitoring and Management',color:'#374151',icon:'📡',desc:'Monitors client computers, servers, and devices remotely. Sends alerts when something breaks. Not billing-related.',examples:'ConnectWise Automate, Kaseya VSA, NinjaRMM',apNote:'AP does NOT integrate here'},
               {name:'Accounting',full:'Accounting Software',color:'#065f46',icon:'📊',desc:'Tracks money flowing in and out. Handles taxes, payroll, and financial statements. Receives invoice data from the PSA.',examples:'QuickBooks Online, QuickBooks Desktop, Xero',apNote:'AP integrates HERE too'},
             ].map(s=>(
@@ -1574,7 +1587,7 @@
                 <thead>
                   <tr className="border-b-2 border-slate-200">
                     <th className="text-left py-3 pr-4 text-slate-500 font-semibold">Function</th>
-                    <th className="text-center py-3 px-4 font-bold" style={{color:'#0a1628'}}>PSA</th>
+                    <th className="text-center py-3 px-4 font-bold" style={{color:'#2B2D42'}}>PSA</th>
                     <th className="text-center py-3 px-4 font-bold text-emerald-700">Accounting</th>
                   </tr>
                 </thead>
@@ -1596,12 +1609,12 @@
       if (moduleId==='psa-platforms') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>PSA Platforms Explained</h2>
+            <h2 className="text-2xl font-black mb-2" style={{color:'#2B2D42'}}>PSA Platforms Explained</h2>
             <p className="text-slate-600 leading-relaxed">Knowing which PSA an MSP uses tells you who their current payment processor is, and how easy it is for them to switch to AP. Click each platform to learn more.</p>
           </div>
           <div className="space-y-3">
             {[
-              {name:'ConnectWise',owner:'ConnectWise (independent)',processor:'WisePay (bundled with ConnectWise)',color:'#1e3a5f',apIntegration:'✅ AP Integrates (Live)',notes:'ConnectWise is the largest PSA in the market. AP has a live, native ConnectWise integration (on-prem and cloud). It is the most popular PSA integration in our portfolio, battle-tested across hundreds of MSPs. WisePay is their default payment tool, and ConnectWise requires WiseSync to push data to QuickBooks. AP replaces WisePay and connects directly to both ConnectWise and QuickBooks, no WiseSync needed.'},
+              {name:'ConnectWise',owner:'ConnectWise (independent)',processor:'WisePay (bundled with ConnectWise)',color:'#3D3F56',apIntegration:'✅ AP Integrates (Live)',notes:'ConnectWise is the largest PSA in the market. AP has a live, native ConnectWise integration (on-prem and cloud). It is the most popular PSA integration in our portfolio, battle-tested across hundreds of MSPs. WisePay is their default payment tool, and ConnectWise requires WiseSync to push data to QuickBooks. AP replaces WisePay and connects directly to both ConnectWise and QuickBooks, no WiseSync needed.'},
               {name:'Autotask (Kaseya)',owner:'Kaseya (acquired 2022)',processor:'ConnectBooster (also owned by Kaseya)',color:'#b45309',apIntegration:'✅ AP Integrates (Live)',notes:"AP has a live, full two-way integration with Autotask (Datto PSA). Invoices sync automatically and payments reconcile back in real time. Autotask was acquired by Datto in 2017, then Kaseya bought Datto in 2022. MSPs who used Autotask for years now find themselves inside the Kaseya ecosystem, which many dislike. ConnectBooster is the default payment tool. Since MSPs distrust Kaseya, they are very open to alternatives."},
               {name:'HaloPSA',owner:'Halo (independent UK company)',processor:'Alternative Payments (exclusive partner)',color:'#059669',apIntegration:'✅ AP Integrates (Live + Exclusive)',notes:'🌟 STRATEGIC WIN: AP has a live, native HaloPSA integration. HaloPSA is growing fast and taking market share from ConnectWise. Their only officially supported MSP payment processor integration is Alternative Payments. Every HaloPSA prospect is a warm lead for us.'},
               {name:'SuperOps',owner:'SuperOps (independent)',processor:'Stripe or FlexPoint',color:'#dc2626',apIntegration:'✅ AP Integrates (Live)',notes:'AP has a live, native SuperOps integration. SuperOps is a modern unified PSA and RMM with an AI focus. Newer entrant to the market. Default payment is typically Stripe or FlexPoint, neither of which offer dual integration or a branded client portal. Growing presence in the market and a strong opportunity for AP.'},
@@ -1627,7 +1640,7 @@
       if (moduleId==='money-flow') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>How MSPs Get Paid</h2>
+            <h2 className="text-2xl font-black mb-2" style={{color:'#2B2D42'}}>How MSPs Get Paid</h2>
             <p className="text-slate-600 leading-relaxed">Before AP, MSPs had a painful and manual billing cycle. See the difference between the old way and the AP way.</p>
           </div>
           <div className="bg-white rounded-2xl border border-slate-200 p-5">
@@ -1678,7 +1691,7 @@
       if (moduleId==='ap-fit') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>Where AP Fits In</h2>
+            <h2 className="text-2xl font-black mb-2" style={{color:'#2B2D42'}}>Where AP Fits In</h2>
             <p className="text-slate-600 leading-relaxed">Alternative Payments is the bridge between an MSP's billing system (PSA) and their financial tracking system (accounting software). This dual integration is what makes AP different from all competitors.</p>
           </div>
           <DualIntegrationDiagram/>
@@ -1707,7 +1720,7 @@
               </div>
             </div>
           </div>
-          <div className="rounded-2xl p-6" style={{background:'linear-gradient(135deg,#2563eb,#1d4ed8)'}}>
+          <div className="rounded-2xl p-6" style={{background:'linear-gradient(135deg,#2B2D6B,#1d4ed8)'}}>
             <h3 className="text-white font-black text-lg mb-3">Why Competitors Cannot Match This</h3>
             <div className="grid md:grid-cols-3 gap-4">
               {[{name:'WisePay',issue:'Only integrates with ConnectWise. No accounting sync.'},{name:'ConnectBooster',issue:'Kaseya-owned. Limited PSA coverage. Losing trust in market.'},{name:'Stripe / Square',issue:'Generic payment tools. No PSA integration at all.'}].map(c=>(
@@ -1734,7 +1747,7 @@
       if (moduleId==='msp-culture') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>MSP Culture and How to Sell to It</h2>
+            <h2 className="text-2xl font-black mb-2" style={{color:'#2B2D42'}}>MSP Culture and How to Sell to It</h2>
             <p className="text-slate-600 leading-relaxed">MSPs have a distinct culture. Understanding it makes you far more effective on cold calls and in demos. These are the things no script can tell you, but they matter a lot.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
@@ -1776,7 +1789,7 @@
       if (moduleId==='spot-psa') return (
         <div className="space-y-6 slide-in">
           <div className="bg-white rounded-2xl border border-slate-200 p-6">
-            <h2 className="text-2xl font-black mb-2" style={{color:'#0a1628'}}>How to Spot a PSA on Their Website</h2>
+            <h2 className="text-2xl font-black mb-2" style={{color:'#2B2D42'}}>How to Spot a PSA on Their Website</h2>
             <p className="text-slate-600 leading-relaxed">Before a cold call, you can often figure out which PSA an MSP uses, and therefore which payment processor they are likely running, just by visiting their website.</p>
           </div>
           <div className="rounded-2xl border border-blue-200 p-6" style={{background:'linear-gradient(135deg,#eff6ff,#eef2ff)'}}>
@@ -1785,8 +1798,8 @@
           </div>
           <div className="space-y-4">
             {[
-              {psa:'ConnectWise',signals:['URL contains connectwise.com, screensurfer.com, or a custom subdomain','Login page has a dark navy/blue corporate theme','ConnectWise logo visible in portal header','Note: Older versions look more dated/grey, still ConnectWise'],processor:'WisePay',apStatus:'✅ AP Integrates',opportunity:'WisePay is limited to ConnectWise only. AP offers ConnectWise integration with accounting sync WisePay cannot provide.',color:'#1e3a5f',
-                portal:{bg:'#0a1628',accent:'#1e3a5f',text:'white',label:'ConnectWise Client Portal',url:'company.connectwise.com/clientportal',field1:'Username',field2:'Password',btnColor:'#2563eb',note:'Multiple visual variants exist. Navy/dark is most common'}},
+              {psa:'ConnectWise',signals:['URL contains connectwise.com, screensurfer.com, or a custom subdomain','Login page has a dark navy/blue corporate theme','ConnectWise logo visible in portal header','Note: Older versions look more dated/grey, still ConnectWise'],processor:'WisePay',apStatus:'✅ AP Integrates',opportunity:'WisePay is limited to ConnectWise only. AP offers ConnectWise integration with accounting sync WisePay cannot provide.',color:'#3D3F56',
+                portal:{bg:'#2B2D42',accent:'#3D3F56',text:'white',label:'ConnectWise Client Portal',url:'company.connectwise.com/clientportal',field1:'Username',field2:'Password',btnColor:'#2B2D6B',note:'Multiple visual variants exist. Navy/dark is most common'}},
               {psa:'Autotask (Kaseya)',signals:['URL contains autotask.net','Login screen reads "Autotask PSA" or "Client Portal"','Simple, corporate login form','ww1.autotask.net is the typical URL pattern'],processor:'ConnectBooster',apStatus:'✅ AP Integrates',opportunity:"Kaseya-owned. Best prospect for switching. Lead with the Kaseya angle. They're looking to leave.",color:'#b45309',
                 portal:{bg:'#1f2937',accent:'#374151',text:'white',label:'Autotask Client Portal',url:'ww1.autotask.net/clientportal/login.aspx',field1:'Username',field2:'Password',btnColor:'#b45309',note:'Straightforward corporate login. Kaseya branding minimal'}},
               {psa:'HaloPSA',signals:['URL contains haloservicedesk.com or custom subdomain','Clean, modern portal with white/light UI','Halo branding or logo visible','Often shows "Support Portal" or company name prominently'],processor:'Alternative Payments (exclusive partner)',apStatus:'✅ AP Integrates (Exclusive)',opportunity:'🌟 Every HaloPSA prospect is a warm AP lead. We are their ONLY officially supported payment integration.',color:'#059669',
@@ -1849,12 +1862,12 @@
     }
     // ─── Module Definitions ───────────────────────────────────────────────────
     const MODULES = [
-      {id:'what-is-msp',icon:'🏢',title:'What Is an MSP?',desc:'The basics of Managed Service Providers',time:'8 min',color:'#1e3a5f'},
+      {id:'what-is-msp',icon:'🏢',title:'What Is an MSP?',desc:'The basics of Managed Service Providers',time:'8 min',color:'#3D3F56'},
       {id:'tech-stack',icon:'🔧',title:'The MSP Tech Stack',desc:'PSA, RMM, and accounting software explained',time:'10 min',color:'#374151'},
       {id:'psa-platforms',icon:'🏛️',title:'PSA Platforms',desc:'ConnectWise, Autotask, HaloPSA, and more',time:'10 min',color:'#b45309'},
       {id:'money-flow',icon:'💰',title:'How MSPs Get Paid',desc:'The invoice flow from billing to collection',time:'8 min',color:'#065f46'},
       {id:'invoicing-flow',icon:'🧾',title:'The Invoicing Flow',desc:'From ticket creation to payment capture',time:'8 min',color:'#0d9488'},
-      {id:'ap-fit',icon:'⚡',title:'Where AP Fits',desc:'Dual integration and the AP advantage',time:'10 min',color:'#2563eb'},
+      {id:'ap-fit',icon:'⚡',title:'Where AP Fits',desc:'Dual integration and the AP advantage',time:'10 min',color:'#2B2D6B'},
       {id:'msp-culture',icon:'🤝',title:'MSP Culture',desc:'How to sell to MSPs effectively',time:'7 min',color:'#7c3aed'},
       {id:'spot-psa',icon:'🔍',title:'Spot a PSA',desc:'Identify PSA types from MSP websites',time:'6 min',color:'#0284c7'},
       {id:'competitive',icon:'⚔️',title:'Competitive Playbook',desc:'Talk tracks & objections for every competitor',time:'Reference',color:'#dc2626'},
@@ -1864,26 +1877,26 @@
     function HomeScreen({ onSelect }) {
       return (
         <div className="space-y-6 slide-in">
-          <div className="gradient-header rounded-2xl p-8 text-white">
+          <div className="gradient-header rounded-2xl p-8 text-white" style={{borderRadius:'12px'}}>
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-blue-200 font-semibold">Alternative Payments</span>
+              <span style={{color:'#C5A338'}} className="font-semibold">Alternative Payments</span>
             </div>
             <h1 className="text-3xl font-black leading-tight mb-3">MSP Landscape<br/>Onboarding Guide</h1>
-            <p className="text-blue-100 leading-relaxed max-w-lg">Everything you need to understand the MSP market, speak the language, and sell with confidence. Work through each module at your own pace.</p>
+            <p style={{color:'rgba(255,255,255,0.8)'}} className="leading-relaxed max-w-lg">Everything you need to understand the MSP market, speak the language, and sell with confidence. Work through each module at your own pace.</p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>10 Modules</div>
-              <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>Interactive visuals</div>
-              <div className="rounded-xl px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.15)'}}>Quizzes included</div>
+              <div className="rounded-lg px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.12)',borderRadius:'8px'}}>10 Modules</div>
+              <div className="rounded-lg px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.12)',borderRadius:'8px'}}>Interactive visuals</div>
+              <div className="rounded-lg px-4 py-2 text-sm font-semibold" style={{backgroundColor:'rgba(255,255,255,0.12)',borderRadius:'8px'}}>Quizzes included</div>
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             {MODULES.map(m=>(
-              <button key={m.id} onClick={()=>onSelect(m.id)} className="module-card bg-white rounded-2xl border border-slate-200 p-5 text-left shadow-sm">
+              <button key={m.id} onClick={()=>onSelect(m.id)} className="module-card bg-white p-5 text-left" style={{border:'1px solid #E2E8F0',boxShadow:'var(--ap-shadow-flat)'}}>
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0" style={{backgroundColor:m.color+'20'}}>{m.icon}</div>
                   <div className="flex-1">
-                    <p className="font-black text-slate-800 text-base">{m.title}</p>
-                    <p className="text-slate-500 text-sm mt-1 leading-snug">{m.desc}</p>
+                    <p className="font-bold text-base" style={{color:'#2B2D42'}}>{m.title}</p>
+                    <p className="text-sm mt-1 leading-snug" style={{color:'#94A3B8'}}>{m.desc}</p>
                     <p className="text-xs font-semibold mt-2" style={{color:m.color}}>{m.time} read</p>
                   </div>
                   <span className="text-slate-300 text-xl mt-1">→</span>
@@ -1900,16 +1913,17 @@
       const [sidebarOpen, setSidebarOpen] = useState(false);
       const current = MODULES.find(m=>m.id===active);
       return (
-        <div className="min-h-screen flex flex-col" style={{backgroundColor:'#f0f4f8'}}>
-          <nav className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+        <div className="min-h-screen flex flex-col" style={{backgroundColor:'#F8FAFC'}}>
+          <nav className="sticky top-0 z-50 bg-white border-b shadow-sm" style={{borderColor:'#E2E8F0',boxShadow:'var(--ap-shadow-sticky)'}}>
             <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <button onClick={()=>setSidebarOpen(!sidebarOpen)} className="md:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100">☰</button>
-                <button onClick={()=>setActive('home')} className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{backgroundColor:'#0a1628'}}>
-                    <span className="text-white text-xs font-black">AP</span>
-                  </div>
-                  <span className="font-black text-slate-800 text-sm hidden sm:block">MSP Guide</span>
+                <button onClick={()=>setActive('home')} className="flex items-center gap-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 40" style={{height:'28px'}}>
+                    <text x="0" y="30" fontFamily="Inter, -apple-system, BlinkMacSystemFont, sans-serif" fontSize="24" fontWeight="700" fill="#2B2D42">alternative</text>
+                    <text x="158" y="30" fontFamily="Inter, -apple-system, BlinkMacSystemFont, sans-serif" fontSize="24" fontWeight="400" fill="#2B2D42">payments</text>
+                  </svg>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full hidden sm:block" style={{backgroundColor:'#F3EEFF',color:'#2B2D6B'}}>MSP Guide</span>
                 </button>
                 {active!=='home'&&current&&(
                   <>
@@ -1918,12 +1932,12 @@
                   </>
                 )}
               </div>
-              <button onClick={()=>setActive('home')} className={`text-sm font-semibold px-4 py-1.5 rounded-xl transition-all ${active==='home'?'text-blue-600':'text-slate-500 hover:text-slate-800'}`}>All Modules</button>
+              <button onClick={()=>setActive('home')} className={`text-sm font-semibold px-4 py-1.5 rounded-lg transition-all ${active==='home'?'text-white':'text-slate-500 hover:text-slate-800'}`} style={active==='home'?{backgroundColor:'#2B2D6B'}:{}}>All Modules</button>
             </div>
           </nav>
           <div className="flex flex-1 max-w-7xl mx-auto w-full">
-            <aside className={`${sidebarOpen?'block':'hidden'} md:block w-64 flex-shrink-0 border-r border-slate-200 bg-white`}
-              style={{position:'sticky',top:'56px',height:'calc(100vh - 56px)',overflowY:'auto'}}>
+            <aside className={`${sidebarOpen?'block':'hidden'} md:block w-64 flex-shrink-0 bg-white`}
+              style={{position:'sticky',top:'56px',height:'calc(100vh - 56px)',overflowY:'auto',borderRight:'1px solid #E2E8F0'}}>
               <div className="p-4">
                 <button onClick={()=>{setActive('home');setSidebarOpen(false)}} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all mb-1 ${active==='home'?'nav-item-active':'text-slate-600 hover:bg-slate-100'}`}>
                   <span>🏠</span> Home
